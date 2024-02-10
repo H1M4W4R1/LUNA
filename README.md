@@ -17,7 +17,7 @@ This is a weapon that is placed in world. It can be for example a spike in a spi
 This type represents a weapon that can be wielded by user. Weapon damage is computed dynamically based on current weapon swing energy. The weapon energy / speed factor is defined by below formula:
 
 ```
-Speed Factor is equal to moving average of velocity across specified timespan (expected attack time)
+Speed Factor is equal to modulus of moving average of velocity across specified timespan (expected attack time)
 ```
 
 In other words: the system is resistant to things like quick wrist attacks while wielding a greatsword - as you need to smash it for a good second to gain full power.
