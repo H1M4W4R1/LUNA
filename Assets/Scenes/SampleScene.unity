@@ -336,8 +336,9 @@ MonoBehaviour:
   damageScaleMethod: 0
   flatDamage: 0
   damagePower: 0
+  vulnerabilityScaling: 2
+  damageType: 0
   expectedAttackTime: 5
-  tempRecentSpeedExplain: 0
 --- !u!4 &1311025674
 Transform:
   m_ObjectHideFlags: 0

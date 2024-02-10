@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
+using H1M4W4R1.LUNA.Weapons.Computation;
 using H1M4W4R1.LUNA.Weapons.Damage;
 using H1M4W4R1.LUNA.Weapons.Scaling;
+using NUnit.Framework;
 using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
@@ -13,7 +16,7 @@ namespace H1M4W4R1.LUNA.Weapons
     [BurstCompile]
     public abstract class WeaponBase : MonoBehaviour
     {
-        private IDamageScaleMethod _damageScaleMethod;
+        private IDamageScaleMethod _damageScaleMethod; // Internal structural dependency
 
         [Tooltip("Type of damage scaling for this weapon")]
         public DamageScaleMethod damageScaleMethod;
@@ -21,11 +24,20 @@ namespace H1M4W4R1.LUNA.Weapons
         [Tooltip("Flat damage of this weapon - aka. base damage")]
         public float flatDamage;
         
-        [Tooltip("Power of this weapon, used only in case of DamageScaleMethod.Power")]
+        [Tooltip("Power for damage scaling computation, used in DamageScaleMethod.Power")]
         public int damagePower;
 
         [Tooltip("Weapon vulnerability scaling")]
-        public VulnerabilityScaling vulnerabilityScaling;
+        public VulnerabilityScaling vulnerabilityScaling = VulnerabilityScaling.Multiplicative;
+
+        [Tooltip("Weapon damage type, applies this damage type to all damage vectors")]
+        public DamageType damageType = DamageType.None;
+
+        /// <summary>
+        /// List of vectors used in damage computation - nearest vector is acquired (also taking angle into consideration)
+        /// Then damage is dealt based on damage type of that vector
+        /// </summary>
+        protected List<WeaponDamageVector> damageVectors = new List<WeaponDamageVector>();
         
         /// <summary>
         /// Get current speed of this weapon.
@@ -61,5 +73,58 @@ namespace H1M4W4R1.LUNA.Weapons
         {
             Initialize();
         }
+
+        public WeaponDamageVector FindClosestDamageVector(float3 collisionPoint,
+            float3 collisionNormal,
+            float angleWeight = 5f,
+            float distanceWeight = 1f)
+        {
+            var tObj = transform;
+
+            return FindClosestDamageVector(tObj.position, tObj.rotation, collisionPoint, collisionNormal, angleWeight,
+                distanceWeight);
+        }
+        
+        /// <summary>
+        /// Find closest damage vector based on attack point and normalized direction
+        /// </summary>
+        [BurstCompile]
+        private WeaponDamageVector FindClosestDamageVector(
+            float3 position,
+            quaternion rotation,
+            float3 collisionPoint,
+            float3 collisionNormal,
+            float angleWeight,
+            float distanceWeight)
+        {
+            if(damageVectors.Count < 1)
+                Debug.LogError("[LUNA] Weapon must have at least one damage vector. Otherwise it's useless!");
+            
+            var closestStruct = default(WeaponDamageVector);
+            var minScore = float.MaxValue;
+
+            foreach (var currentStruct in damageVectors)
+            {
+                // Calculate angle difference (cosine similarity between **normalized** vectors)
+                var angleDifference = 
+                    math.abs(math.dot(currentStruct.GetVectorForRotation(rotation), collisionNormal));
+
+                // Calculate distance (startPoint is in local space, collision is in world space)
+                var distance = math.distance(currentStruct.startPoint + position, collisionPoint);
+
+                // Combine angle and distance using specified weights
+                var score = angleWeight * (1 - angleDifference) + distanceWeight * distance;
+
+                // Update closest struct if the current score is smaller
+                if (score < minScore)
+                {
+                    minScore = score;
+                    closestStruct = currentStruct;
+                }
+            }
+            
+            return closestStruct;
+        }
+
     }
 }
