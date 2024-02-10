@@ -37,8 +37,7 @@ namespace H1M4W4R1.LUNA
             var damageType = dVector.damageType | _weapon.damageType;
             
             // Compute damage for this weapon
-            var baseDamage = _weapon.GetBaseDamage();
-            var damageSpeedMultiplier = _weapon.GetSpeedDamageMultiplier(); // Speed multiplier and IDamageScaleMethod
+            var baseDamage = _weapon.GetSpeedDamageMultiplier(); // Speed multiplier and IDamageScaleMethod
             var damageMultVulnerability = 0f;
             
             // Check for vulnerabilities
@@ -65,8 +64,8 @@ namespace H1M4W4R1.LUNA
             if (damageMultVulnerability > 0f)
                 baseDamage *= damageMultVulnerability;
 
-            // And speed multiplier
-            baseDamage *= damageSpeedMultiplier;
+            // And all other multipliers
+            baseDamage *= hitbox.baseDamageMultiplier;
 
             // Deal damage
             hitbox.DealDamage(new DamageInfo()

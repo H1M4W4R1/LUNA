@@ -7,7 +7,7 @@ namespace H1M4W4R1.LUNA.Entities
     public class Hitbox : MonoBehaviour
     {
         [Tooltip("Damage will be multiplied if this hitbox is hit")]
-        public float baseDamageMultiplier;
+        public float baseDamageMultiplier = 1f;
 
         /// <summary>
         /// Executed when this hitbox gets hit with a weapon

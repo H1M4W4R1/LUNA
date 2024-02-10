@@ -1,4 +1,5 @@
-﻿using H1M4W4R1.LUNA.Weapons.Damage;
+﻿using System;
+using H1M4W4R1.LUNA.Weapons.Damage;
 using Unity.Mathematics;
 
 namespace H1M4W4R1.LUNA.Weapons.Computation
@@ -9,6 +10,7 @@ namespace H1M4W4R1.LUNA.Weapons.Computation
     /// * blade side - which should deal slash damage
     /// * blade tip - which should deal piercing damage
     /// </summary>
+    [Serializable]
     public struct WeaponDamageVector
     {
         /// <summary>

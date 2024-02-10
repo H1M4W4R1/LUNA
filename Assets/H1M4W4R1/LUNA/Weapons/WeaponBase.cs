@@ -35,6 +35,8 @@ namespace H1M4W4R1.LUNA.Weapons
 
         public float distanceWeight = 1f;
         public float angleWeight = 5f;
+
+        public bool directionMatters = false;
         
         /// <summary>
         /// List of vectors used in damage computation - nearest vector is acquired (also taking angle into consideration)
@@ -87,8 +89,7 @@ namespace H1M4W4R1.LUNA.Weapons
         {
             var tObj = transform;
 
-            return FindClosestDamageVector(tObj.position, tObj.rotation, collisionPoint, collisionNormal, angleWeight,
-                distanceWeight);
+            return FindClosestDamageVector(tObj.position, tObj.rotation, collisionPoint, collisionNormal);
         }
         
         /// <summary>
@@ -99,12 +100,13 @@ namespace H1M4W4R1.LUNA.Weapons
             float3 position,
             quaternion rotation,
             float3 collisionPoint,
-            float3 collisionNormal,
-            float angleWeight,
-            float distanceWeight)
+            float3 collisionNormal)
         {
             if(_damageVectors.Count < 1)
                 Debug.LogError("[LUNA] Weapon must have at least one damage vector. Otherwise it's useless!");
+
+            // Invert collision normal for calculation (use anti-normal)
+            collisionNormal = -collisionNormal;
             
             var closestStruct = default(WeaponDamageVector);
             var minScore = float.MaxValue;
@@ -113,7 +115,11 @@ namespace H1M4W4R1.LUNA.Weapons
             {
                 // Calculate angle difference (cosine similarity between **normalized** vectors)
                 var angleDifference = 
-                    math.abs(math.dot(currentStruct.GetVectorForRotation(rotation), collisionNormal));
+                    math.dot(currentStruct.GetVectorForRotation(rotation), collisionNormal);
+
+                // Ignore direction if does not matter
+                if (!directionMatters)
+                    angleDifference = math.abs(angleDifference);
 
                 // Calculate distance (startPoint is in local space, collision is in world space)
                 var distance = math.distance(currentStruct.startPoint + position, collisionPoint);
