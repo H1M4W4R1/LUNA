@@ -65,7 +65,7 @@ Weapons can have different damage dealing subsystems eg. on collision or on trig
 
 Types of damage systems:
 * Collision
-* Trigger (you can scale trigger to simulate explosion) [Not yet implemented]
+* Trigger (you can scale trigger to simulate explosion)
 
 # Planned features
 * Demo scene

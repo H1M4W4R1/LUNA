@@ -1,34 +1,34 @@
-﻿using H1M4W4R1.LUNA.Entities;
-using H1M4W4R1.LUNA.Weapons;
+﻿using System;
+using H1M4W4R1.LUNA.Entities;
 using H1M4W4R1.LUNA.Weapons.Damage;
+using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace H1M4W4R1.LUNA
+namespace H1M4W4R1.LUNA.Weapons.Components
 {
     /// <summary>
-    /// Deals weapon damage when weapon collides with damageable object
+    /// Represents basic weapon subsystem that is responsible for detecting damage occurence.
+    /// It can be for example: when weapon collides with enemy or when enemy enters trigger.
     /// </summary>
-    [RequireComponent(typeof(WeaponBase))]
-    public class WeaponDamageOnCollision : MonoBehaviour
+    public abstract class WeaponDamageSystemBase : MonoBehaviour
     {
         private WeaponBase _weapon;
+        protected Transform _transform;
         
-        private void Awake()
+        protected void Awake()
         {
             _weapon = GetComponent<WeaponBase>();
+            _transform = transform;
         }
 
-        private void OnCollisionEnter(Collision other)
+        /// <summary>
+        /// Process this damage system
+        /// </summary>
+        public void Process(Hitbox hitbox, float3 position, float3 normalVector)
         {
-            // Get HitBox component
-            var hitbox = other.gameObject.GetComponent<Hitbox>();
-
-            // Only first contact matters
-            var cPoint = other.GetContact(0);
-            
             // Get collision information and damage type
-            var dVector = _weapon.FindClosestDamageVector(cPoint.point, cPoint.normal);
+            var dVector = _weapon.FindClosestDamageVector(position, normalVector);
             var damageType = dVector.damageType | _weapon.damageType;
             
             // Compute damage for this weapon
