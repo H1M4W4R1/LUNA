@@ -1,4 +1,5 @@
-﻿using H1M4W4R1.LUNA.Weapons;
+﻿using System.Collections.Generic;
+using H1M4W4R1.LUNA.Weapons.Damage;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -8,6 +9,8 @@ namespace H1M4W4R1.LUNA.Entities
     {
         [Tooltip("Damage will be multiplied if this hitbox is hit")]
         public float baseDamageMultiplier = 1f;
+
+        public readonly List<DamageVulnerability> vulnerabilities = new List<DamageVulnerability>();
 
         /// <summary>
         /// Executed when this hitbox gets hit with a weapon

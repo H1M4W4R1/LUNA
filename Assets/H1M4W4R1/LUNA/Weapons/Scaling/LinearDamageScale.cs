@@ -1,5 +1,4 @@
 ﻿using Unity.Burst;
-using UnityEngine;
 
 namespace H1M4W4R1.LUNA.Weapons.Scaling
 {

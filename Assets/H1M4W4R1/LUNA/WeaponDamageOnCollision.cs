@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using H1M4W4R1.LUNA.Entities;
+﻿using H1M4W4R1.LUNA.Entities;
 using H1M4W4R1.LUNA.Weapons;
 using H1M4W4R1.LUNA.Weapons.Damage;
 using Unity.Mathematics;
@@ -15,13 +13,10 @@ namespace H1M4W4R1.LUNA
     public class WeaponDamageOnCollision : MonoBehaviour
     {
         private WeaponBase _weapon;
-        private readonly List<DamageVulnerability> _vulnerabilities = new List<DamageVulnerability>();
-
+        
         private void Awake()
         {
             _weapon = GetComponent<WeaponBase>();
-            foreach (var c in GetComponents<DamageVulnerability>())
-                _vulnerabilities.Add(c);
         }
 
         private void OnCollisionEnter(Collision other)
@@ -41,7 +36,7 @@ namespace H1M4W4R1.LUNA
             var damageMultVulnerability = 0f;
             
             // Check for vulnerabilities
-            foreach (var vulnerability in _vulnerabilities)
+            foreach (var vulnerability in hitbox.vulnerabilities)
             {
                 if (!vulnerability.IsVulnerableTo(damageType)) continue;
 

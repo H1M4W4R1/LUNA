@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using H1M4W4R1.LUNA.Weapons.Computation;
 using H1M4W4R1.LUNA.Weapons.Damage;
 using H1M4W4R1.LUNA.Weapons.Scaling;
-using NUnit.Framework;
 using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
@@ -42,7 +40,8 @@ namespace H1M4W4R1.LUNA.Weapons
         /// List of vectors used in damage computation - nearest vector is acquired (also taking angle into consideration)
         /// Then damage is dealt based on damage type of that vector
         /// </summary>
-        private readonly List<WeaponDamageVector> _damageVectors = new List<WeaponDamageVector>();
+        [SerializeField]
+        private List<WeaponDamageVector> damageVectors = new List<WeaponDamageVector>();
         
         /// <summary>
         /// Get current speed of this weapon.
@@ -102,7 +101,7 @@ namespace H1M4W4R1.LUNA.Weapons
             float3 collisionPoint,
             float3 collisionNormal)
         {
-            if(_damageVectors.Count < 1)
+            if(damageVectors.Count < 1)
                 Debug.LogError("[LUNA] Weapon must have at least one damage vector. Otherwise it's useless!");
 
             // Invert collision normal for calculation (use anti-normal)
@@ -111,7 +110,7 @@ namespace H1M4W4R1.LUNA.Weapons
             var closestStruct = default(WeaponDamageVector);
             var minScore = float.MaxValue;
 
-            foreach (var currentStruct in _damageVectors)
+            foreach (var currentStruct in damageVectors)
             {
                 // Calculate angle difference (cosine similarity between **normalized** vectors)
                 var angleDifference = 
