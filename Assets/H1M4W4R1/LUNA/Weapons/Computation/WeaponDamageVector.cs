@@ -1,4 +1,5 @@
-﻿using Unity.Mathematics;
+﻿using H1M4W4R1.LUNA.Weapons.Damage;
+using Unity.Mathematics;
 
 namespace H1M4W4R1.LUNA.Weapons.Computation
 {
@@ -24,5 +25,10 @@ namespace H1M4W4R1.LUNA.Weapons.Computation
         /// Computes relative vector based by specified rotation of object
         /// </summary>
         public float3 GetVectorForRotation(quaternion objectRotation) => math.rotate(objectRotation, relativeVectorNormalized);
+
+        /// <summary>
+        /// Vector damage type
+        /// </summary>
+        public DamageType damageType;
     }
 }

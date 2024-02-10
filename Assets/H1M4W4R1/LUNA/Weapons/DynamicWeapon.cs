@@ -21,7 +21,7 @@ namespace H1M4W4R1.LUNA.Weapons
         public override float3 GetRecentSpeed() => _averagedSpeed;
 
         [BurstCompile]
-        public override float GetSpeedDamageMultiplier() => math.length(_averagedSpeed);
+        public override float GetSpeedDamageMultiplier() => _damageScaleMethod.CalculateScaleFrom(math.length(_averagedSpeed));
 
         protected new void Awake()
         {

@@ -16,7 +16,7 @@ namespace H1M4W4R1.LUNA.Weapons
     [BurstCompile]
     public abstract class WeaponBase : MonoBehaviour
     {
-        private IDamageScaleMethod _damageScaleMethod; // Internal structural dependency
+        protected IDamageScaleMethod _damageScaleMethod; // Internal structural dependency
 
         [Tooltip("Type of damage scaling for this weapon")]
         public DamageScaleMethod damageScaleMethod;
@@ -33,11 +33,14 @@ namespace H1M4W4R1.LUNA.Weapons
         [Tooltip("Weapon damage type, applies this damage type to all damage vectors")]
         public DamageType damageType = DamageType.None;
 
+        public float distanceWeight = 1f;
+        public float angleWeight = 5f;
+        
         /// <summary>
         /// List of vectors used in damage computation - nearest vector is acquired (also taking angle into consideration)
         /// Then damage is dealt based on damage type of that vector
         /// </summary>
-        protected List<WeaponDamageVector> damageVectors = new List<WeaponDamageVector>();
+        private readonly List<WeaponDamageVector> _damageVectors = new List<WeaponDamageVector>();
         
         /// <summary>
         /// Get current speed of this weapon.
@@ -45,6 +48,8 @@ namespace H1M4W4R1.LUNA.Weapons
         public abstract float3 GetRecentSpeed();
 
         public abstract float GetSpeedDamageMultiplier();
+
+        public float GetBaseDamage() => _damageScaleMethod.GetBaseDamage();
 
         /// <summary>
         /// Initialize weapon data
@@ -74,10 +79,11 @@ namespace H1M4W4R1.LUNA.Weapons
             Initialize();
         }
 
+        /// <summary>
+        /// Find closest damage vector based on attack point and normalized direction
+        /// </summary>
         public WeaponDamageVector FindClosestDamageVector(float3 collisionPoint,
-            float3 collisionNormal,
-            float angleWeight = 5f,
-            float distanceWeight = 1f)
+            float3 collisionNormal)
         {
             var tObj = transform;
 
@@ -97,13 +103,13 @@ namespace H1M4W4R1.LUNA.Weapons
             float angleWeight,
             float distanceWeight)
         {
-            if(damageVectors.Count < 1)
+            if(_damageVectors.Count < 1)
                 Debug.LogError("[LUNA] Weapon must have at least one damage vector. Otherwise it's useless!");
             
             var closestStruct = default(WeaponDamageVector);
             var minScore = float.MaxValue;
 
-            foreach (var currentStruct in damageVectors)
+            foreach (var currentStruct in _damageVectors)
             {
                 // Calculate angle difference (cosine similarity between **normalized** vectors)
                 var angleDifference = 

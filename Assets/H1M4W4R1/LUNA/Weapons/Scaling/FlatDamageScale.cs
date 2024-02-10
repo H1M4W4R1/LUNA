@@ -16,5 +16,7 @@ namespace H1M4W4R1.LUNA.Weapons.Scaling
         {
             return baseDamage;
         }
+        
+        public float GetBaseDamage() => baseDamage;
     }
 }

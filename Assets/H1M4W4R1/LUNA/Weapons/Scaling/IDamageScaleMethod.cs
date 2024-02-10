@@ -9,5 +9,6 @@
     public interface IDamageScaleMethod
     {
         public float CalculateScaleFrom(float speedMultiplier);
+        float GetBaseDamage();
     }
 }

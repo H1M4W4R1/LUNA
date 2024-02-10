@@ -13,7 +13,7 @@ namespace H1M4W4R1.LUNA.Weapons
         public override float3 GetRecentSpeed() => new float3(1, 1, 1);
 
         [BurstCompile]
-        public override float GetSpeedDamageMultiplier() => 1f;
+        public override float GetSpeedDamageMultiplier() => _damageScaleMethod.CalculateScaleFrom(1f);
 
     }
 }
