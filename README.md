@@ -70,6 +70,5 @@ Types of damage systems:
 
 # Planned features
 * Demo scene
-* Resistances (anti-vulnerabilties)
 * In-Editor Weapon Editor
 * Custom Inspectors
