@@ -43,6 +43,10 @@ namespace H1M4W4R1.LUNA
                 // Compute scaling
                 switch (_weapon.vulnerabilityScaling)
                 {
+                    case VulnerabilityScaling.None:
+                        if (vulnerability.damageMultiplier > damageMultVulnerability)
+                            damageMultVulnerability = vulnerability.damageMultiplier;
+                        break;
                     case VulnerabilityScaling.Additive:
                         damageMultVulnerability += vulnerability.damageMultiplier;
                         break;
@@ -63,12 +67,14 @@ namespace H1M4W4R1.LUNA
             baseDamage *= hitbox.baseDamageMultiplier;
 
             // Deal damage
-            hitbox.DealDamage(new DamageInfo()
+            var dmgInfo = new DamageInfo()
             {
                 damageAmount = baseDamage,
                 damageType = damageType,
                 weapon = _weapon
-            });
+            };
+
+            hitbox.DealDamage(ref dmgInfo);
         }
     }
 }

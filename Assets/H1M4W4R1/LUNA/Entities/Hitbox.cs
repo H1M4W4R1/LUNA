@@ -18,9 +18,14 @@ namespace H1M4W4R1.LUNA.Entities
         public UnityEvent<DamageInfo> onHit;
 
         /// <summary>
+        /// Add damage vulnerability
+        /// </summary>
+        public void AddVulnerability(ref DamageVulnerability v) => vulnerabilities.Add(v);
+        
+        /// <summary>
         /// Deal damage to this hitbox
         /// </summary>
-        public virtual void DealDamage(DamageInfo info)
+        public virtual void DealDamage(ref DamageInfo info)
         {
             onHit.Invoke(info);
         }
