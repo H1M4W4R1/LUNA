@@ -32,8 +32,9 @@ namespace H1M4W4R1.LUNA.Weapons.Components
             var damageType = dVector.damageType | _weapon.damageType;
             
             // Compute damage for this weapon
-            var baseDamage = _weapon.GetSpeedDamageMultiplier(); // Speed multiplier and IDamageScaleMethod
+            var damage = _weapon.GetSpeedDamageMultiplier(); // Speed multiplier and IDamageScaleMethod
             var damageMultVulnerability = 0f;
+            var damageMultResistance = 0f;
             
             // Check for vulnerabilities
             foreach (var vulnerability in hitbox.vulnerabilities)
@@ -51,25 +52,61 @@ namespace H1M4W4R1.LUNA.Weapons.Components
                         damageMultVulnerability += vulnerability.damageMultiplier;
                         break;
                     case VulnerabilityScaling.Multiplicative:
-                        baseDamage *= vulnerability.damageMultiplier;
+                        damageMultVulnerability = damageMultVulnerability == 0f
+                            ? vulnerability.damageMultiplier
+                            : damageMultVulnerability * vulnerability.damageMultiplier;
+                        // damage *= vulnerability.damageMultiplier;
                         break;
                     case VulnerabilityScaling.Exponential:
-                        baseDamage = math.pow(baseDamage, vulnerability.damageMultiplier);
+                        damageMultVulnerability = damageMultVulnerability == 0f ? 
+                            vulnerability.damageMultiplier : math.pow(damageMultVulnerability, vulnerability.damageMultiplier);
+                        // damage = math.pow(damage, vulnerability.damageMultiplier);
+                        break;
+                }
+            }
+            
+            // Check for resistances
+            foreach (var resistance in hitbox.resistances)
+            {
+                if (!resistance.IsResistantTo(damageType)) continue;
+
+                // Compute scaling
+                switch (_weapon.vulnerabilityScaling)
+                {
+                    case VulnerabilityScaling.None:
+                        if (resistance.damageAntiMultiplier > damageMultResistance)
+                            damageMultResistance = resistance.damageAntiMultiplier;
+                        break;
+                    case VulnerabilityScaling.Additive:
+                        damageMultResistance += resistance.damageAntiMultiplier;
+                        break;
+                    case VulnerabilityScaling.Multiplicative:
+                        damageMultResistance = damageMultResistance == 0f
+                            ? resistance.damageAntiMultiplier
+                            : damageMultResistance * resistance.damageAntiMultiplier;
+                        // damage /= resistance.damageAntiMultiplier;
+                        break;
+                    case VulnerabilityScaling.Exponential:
+                        damageMultResistance = damageMultResistance == 0f ? 
+                            resistance.damageAntiMultiplier : math.pow(damageMultResistance, resistance.damageAntiMultiplier);
+                        // damage = math.pow(damage, 1f / resistance.damageAntiMultiplier);
                         break;
                 }
             }
 
             // Mult damage by vulnerability
             if (damageMultVulnerability > 0f)
-                baseDamage *= damageMultVulnerability;
+                damage *= damageMultVulnerability;
+            if (damageMultResistance > 0f)
+                damage /= damageMultResistance;
 
             // And all other multipliers
-            baseDamage *= hitbox.baseDamageMultiplier;
+            damage *= hitbox.baseDamageMultiplier;
 
             // Deal damage
             var dmgInfo = new DamageInfo()
             {
-                damageAmount = baseDamage,
+                damageAmount = damage,
                 damageType = damageType,
                 weapon = _weapon
             };

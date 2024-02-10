@@ -9,6 +9,7 @@ It also has a advantage of being able to differentiate attack types within a sin
 # Requirements
 * Unity.Mathematics
 * Unity.Burst
+* Unity.Collections
 
 # Weapons
 ## Static wapon (Component)
@@ -41,10 +42,10 @@ Damage is equal to base damage multiplied by speed factor to nTh power. Eg if sp
 ### Exponential damage scaling
 Damage is scaled exponentially - base damage is brought to power of speed factor eg. base damage is 10 and speed factor is 5 then damage is 10e5 DMG. This is good for nuclear blast :D
 
-## Vulnerability and damage types
+## Vulnerability, Resistance and damage types
 System supports multiple damage types including melee (slashing, piercing...), magic (fire, ice...) or other (poison, silver...)
 
-Hitbox can have vulnerability to specified damage which leads to damage being multiplied by specified factor. Of course hitbox also supports multiple types of vulnerability scaling (if multiple vulnerabilities exist):
+Hitbox can have vulnerability and resistance to specified damage which leads to damage being multiplied or divided by specified factor. Of course hitbox also supports multiple types of vulnerability scaling (if multiple vulnerabilities exist):
 
 * **None**: mult = max(mult1, mult2, mult3, ...)
 * **Additive**: mult = (mult1 + mult2 + mult3 + ...)
