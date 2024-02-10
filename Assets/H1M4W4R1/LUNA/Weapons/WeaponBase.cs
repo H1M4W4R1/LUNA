@@ -34,7 +34,8 @@ namespace H1M4W4R1.LUNA.Weapons
         public float distanceWeight = 1f;
         public float angleWeight = 5f;
 
-        public bool directionMatters = false;
+        [Tooltip("If false then opposing vectors will be considered to have same angle (angle will be computed in [0,π] range)")]
+        public bool directionMatters = true;
         
         /// <summary>
         /// List of vectors used in damage computation - nearest vector is acquired (also taking angle into consideration)

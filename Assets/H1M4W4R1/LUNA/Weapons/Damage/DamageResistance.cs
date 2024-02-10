@@ -1,4 +1,5 @@
-﻿using Unity.Burst;
+﻿using System;
+using Unity.Burst;
 using UnityEngine;
 
 namespace H1M4W4R1.LUNA.Weapons.Damage
@@ -10,6 +11,7 @@ namespace H1M4W4R1.LUNA.Weapons.Damage
     /// then damageMultiplier will take effect for each of damage type
     /// </summary>
     [BurstCompile]
+    [Serializable]
     public struct DamageResistance
     {
         public DamageType typeOfDamage;

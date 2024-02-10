@@ -153,7 +153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8552754e0b19405db663fde5c9a8ccf7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageScaleMethod: 1
+  damageScaleMethod: 2
   flatDamage: 10
   damagePower: 2
   vulnerabilityScaling: 2
@@ -196,7 +196,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -305,7 +305,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 177662020}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41a6ca5b563e4aaab8be8224f8d2a381, type: 3}
+  m_Script: {fileID: 11500000, guid: 3a9c446b886249f4861214f696476cfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &705507993
@@ -413,7 +413,7 @@ GameObject:
   - component: {fileID: 775190705}
   - component: {fileID: 775190704}
   - component: {fileID: 775190703}
-  - component: {fileID: 775190702}
+  - component: {fileID: 775190707}
   m_Layer: 0
   m_Name: Hitbox
   m_TagString: Untagged
@@ -421,22 +421,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &775190702
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 775190701}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e7037d6745f84823bfaa3bc3e5c2b144, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  baseDamageMultiplier: 1
-  onHit:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!135 &775190703
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -525,6 +509,31 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &775190707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 775190701}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7037d6745f84823bfaa3bc3e5c2b144, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onHit:
+    m_PersistentCalls:
+      m_Calls: []
+  data:
+    baseDamageMultiplier: 1
+    vulnerabilities:
+    - typeOfDamage: 268435460
+      damageMultiplier: 3
+    - typeOfDamage: 268435458
+      damageMultiplier: 1
+    resistances:
+    - typeOfDamage: 268435460
+      damageAntiMultiplier: 5
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
