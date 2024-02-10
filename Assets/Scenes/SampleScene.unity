@@ -132,8 +132,8 @@ GameObject:
   - component: {fileID: 177662023}
   - component: {fileID: 177662022}
   - component: {fileID: 177662021}
-  - component: {fileID: 177662026}
   - component: {fileID: 177662027}
+  - component: {fileID: 177662026}
   m_Layer: 0
   m_Name: Weapon
   m_TagString: Untagged
