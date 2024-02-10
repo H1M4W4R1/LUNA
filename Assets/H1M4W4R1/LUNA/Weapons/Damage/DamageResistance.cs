@@ -18,7 +18,7 @@ namespace H1M4W4R1.LUNA.Weapons.Damage
         public float damageAntiMultiplier;
 
         [BurstCompile]
-        public bool IsResistantTo(DamageType damageType)
+        public bool IsResistantTo(in DamageType damageType)
         {
             return (damageType & typeOfDamage) > 0;
         }

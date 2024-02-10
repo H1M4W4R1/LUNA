@@ -25,7 +25,8 @@ namespace H1M4W4R1.LUNA.Weapons.Components
         /// <summary>
         /// Process this damage system
         /// </summary>
-        public void Process(Hitbox hitbox, float3 position, float3 normalVector)
+        [BurstCompile]
+        public void Process(in HitboxData hitbox, in float3 position, in float3 normalVector, out DamageInfo dmgInfo)
         {
             // Get collision information and damage type
             var dVector = _weapon.FindClosestDamageVector(position, normalVector);
@@ -104,14 +105,12 @@ namespace H1M4W4R1.LUNA.Weapons.Components
             damage *= hitbox.baseDamageMultiplier;
 
             // Deal damage
-            var dmgInfo = new DamageInfo()
+            dmgInfo = new DamageInfo()
             {
                 damageAmount = damage,
                 damageType = damageType,
                 weapon = _weapon
             };
-
-            hitbox.DealDamage(ref dmgInfo);
         }
     }
 }

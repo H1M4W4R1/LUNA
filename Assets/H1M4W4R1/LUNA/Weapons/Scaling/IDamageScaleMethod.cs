@@ -8,7 +8,7 @@
     /// </summary>
     public interface IDamageScaleMethod
     {
-        public float CalculateScaleFrom(float speedMultiplier);
+        public float CalculateScaleFrom(in float speedMultiplier);
         float GetBaseDamage();
     }
 }

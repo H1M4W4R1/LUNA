@@ -14,7 +14,7 @@ namespace H1M4W4R1.LUNA.Weapons.Scaling
         public int power;
         
         [BurstCompile]
-        public float CalculateScaleFrom(float speedMultiplier)
+        public float CalculateScaleFrom(in float speedMultiplier)
         {
             return math.pow(speedMultiplier, power) * baseDamage;
         }

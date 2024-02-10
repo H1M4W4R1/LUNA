@@ -48,6 +48,7 @@ namespace H1M4W4R1.LUNA.Weapons
         /// </summary>
         public abstract float3 GetRecentSpeed();
 
+        [BurstCompile]
         public abstract float GetSpeedDamageMultiplier();
 
         public float GetBaseDamage() => _damageScaleMethod.GetBaseDamage();
@@ -83,8 +84,9 @@ namespace H1M4W4R1.LUNA.Weapons
         /// <summary>
         /// Find closest damage vector based on attack point and normalized direction
         /// </summary>
-        public WeaponDamageVector FindClosestDamageVector(float3 collisionPoint,
-            float3 collisionNormal)
+        [BurstCompile]
+        public WeaponDamageVector FindClosestDamageVector(in float3 collisionPoint,
+            in float3 collisionNormal)
         {
             var tObj = transform;
 
@@ -96,16 +98,16 @@ namespace H1M4W4R1.LUNA.Weapons
         /// </summary>
         [BurstCompile]
         private WeaponDamageVector FindClosestDamageVector(
-            float3 position,
-            quaternion rotation,
-            float3 collisionPoint,
-            float3 collisionNormal)
+            in float3 position,
+            in quaternion rotation,
+            in float3 collisionPoint,
+            in float3 collisionNormal)
         {
             if(damageVectors.Count < 1)
                 Debug.LogError("[LUNA] Weapon must have at least one damage vector. Otherwise it's useless!");
 
             // Invert collision normal for calculation (use anti-normal)
-            collisionNormal = -collisionNormal;
+            var cAntiNormal = -collisionNormal;
             
             var closestStruct = default(WeaponDamageVector);
             var minScore = float.MaxValue;
@@ -114,7 +116,7 @@ namespace H1M4W4R1.LUNA.Weapons
             {
                 // Calculate angle difference (cosine similarity between **normalized** vectors)
                 var angleDifference = 
-                    math.dot(currentStruct.GetVectorForRotation(rotation), collisionNormal);
+                    math.dot(currentStruct.GetVectorForRotation(rotation), cAntiNormal);
 
                 // Ignore direction if does not matter
                 if (!directionMatters)

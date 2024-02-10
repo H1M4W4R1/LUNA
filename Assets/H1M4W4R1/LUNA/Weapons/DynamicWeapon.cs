@@ -40,7 +40,7 @@ namespace H1M4W4R1.LUNA.Weapons
         }
 
         [BurstCompile]
-        private void CalculateSpeedFactor(float deltaTime)
+        private void CalculateSpeedFactor(in float deltaTime)
         {
             // Compute position and speed
             var currentPosition = (float3) transform.position;
@@ -54,7 +54,7 @@ namespace H1M4W4R1.LUNA.Weapons
         }
         
         [BurstCompile]
-        private float3 CalculateMovingAverage(float3 currentSpeed, float deltaTime)
+        private float3 CalculateMovingAverage(in float3 currentSpeed, in float deltaTime)
         {
             // Moving average formula using LERP 
             var weight = math.clamp(deltaTime / expectedAttackTime, 0f, 1f);
