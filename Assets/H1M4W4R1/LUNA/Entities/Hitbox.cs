@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using H1M4W4R1.LUNA.Weapons.Damage;
+﻿using H1M4W4R1.LUNA.Weapons.Damage;
 using Unity.Burst;
-using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -30,8 +27,8 @@ namespace H1M4W4R1.LUNA.Entities
         public virtual void DealDamage(ref DamageInfo info)
         {
             onHit.Invoke(info);
-            
-            Debug.Log("RECEIVED: " + info.damageType + " with amount of " + info.damageAmount);
+           
+            // Debug.Log("RECEIVED: " + info.damageType + " with amount of " + info.damageAmount);
         }
     }
 }

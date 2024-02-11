@@ -1,5 +1,4 @@
-﻿using System;
-using H1M4W4R1.LUNA.Entities;
+﻿using H1M4W4R1.LUNA.Entities;
 using H1M4W4R1.LUNA.Weapons.Damage;
 using Unity.Burst;
 using Unity.Mathematics;
@@ -36,6 +35,9 @@ namespace H1M4W4R1.LUNA.Weapons.Components
             var damage = _weapon.GetSpeedDamageMultiplier(); // Speed multiplier and IDamageScaleMethod
             var damageMultVulnerability = 0f;
             var damageMultResistance = 0f;
+            
+            // INFO: This seems to be compiled with burst, but List<> should not be compatible with it,
+            // maybe Burst does it differently?
             
             // Check for vulnerabilities
             foreach (var vulnerability in hitbox.vulnerabilities)

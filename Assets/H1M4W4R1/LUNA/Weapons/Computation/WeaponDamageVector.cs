@@ -11,8 +11,7 @@ namespace H1M4W4R1.LUNA.Weapons.Computation
     /// * blade side - which should deal slash damage
     /// * blade tip - which should deal piercing damage
     /// </summary>
-    [Serializable]
-    [BurstCompile]
+    [Serializable] [BurstCompile]
     public struct WeaponDamageVector
     {
         /// <summary>
@@ -28,7 +27,7 @@ namespace H1M4W4R1.LUNA.Weapons.Computation
         /// <summary>
         /// Computes relative vector based by specified rotation of object
         /// </summary>
-        [BurstCompile]
+       [BurstCompile]
         public float3 GetVectorForRotation(quaternion objectRotation) => 
             math.rotate(objectRotation, math.rotate(vectorRotation, new float3(0, 0, 1)));
 

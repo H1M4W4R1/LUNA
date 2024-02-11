@@ -131,9 +131,9 @@ GameObject:
   - component: {fileID: 177662024}
   - component: {fileID: 177662023}
   - component: {fileID: 177662022}
-  - component: {fileID: 177662021}
   - component: {fileID: 177662026}
   - component: {fileID: 177662027}
+  - component: {fileID: 177662028}
   m_Layer: 0
   m_Name: Weapon
   m_TagString: Untagged
@@ -141,50 +141,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &177662021
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 177662020}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8552754e0b19405db663fde5c9a8ccf7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  selectedIndex: 0
-  damageScaleMethod: 1
-  flatDamage: 10
-  vulnerabilityScaling: 2
-  damageType: 536870944
-  distanceWeight: 1
-  angleWeight: 5
-  directionMatters: 1
-  damageVectors:
-  - startPoint:
-      x: 0
-      y: 0
-      z: 0
-    vectorRotation:
-      value:
-        x: 0
-        y: -0.7051189
-        z: 0
-        w: 0.7090891
-    damageType: 268435464
-  - startPoint:
-      x: 0
-      y: 0
-      z: 0
-    vectorRotation:
-      value:
-        x: 0
-        y: 0.7067684
-        z: 0
-        w: 0.70744497
-    damageType: 268435460
-  expectedAttackTime: 0.1
 --- !u!135 &177662022
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -301,6 +257,50 @@ Rigidbody:
   m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!114 &177662027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 177662020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8552754e0b19405db663fde5c9a8ccf7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selectedIndex: 0
+  damageScaleMethod: 1
+  flatDamage: 10
+  vulnerabilityScaling: 2
+  damageType: 536870944
+  distanceWeight: 1
+  angleWeight: 5
+  directionMatters: 1
+  damageVectors:
+  - startPoint:
+      x: 0
+      y: 0
+      z: 0
+    vectorRotation:
+      value:
+        x: 0
+        y: -0.7051189
+        z: 0
+        w: 0.7090891
+    damageType: 268435464
+  - startPoint:
+      x: 0
+      y: 0
+      z: 0
+    vectorRotation:
+      value:
+        x: 0
+        y: 0.7067684
+        z: 0
+        w: 0.70744497
+    damageType: 268435460
+  expectedAttackTime: 0.1
+--- !u!114 &177662028
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

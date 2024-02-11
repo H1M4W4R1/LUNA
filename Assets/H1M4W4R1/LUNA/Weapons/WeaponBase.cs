@@ -5,7 +5,6 @@ using H1M4W4R1.LUNA.Weapons.Scaling;
 using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace H1M4W4R1.LUNA.Weapons
 {
@@ -59,7 +58,7 @@ namespace H1M4W4R1.LUNA.Weapons
         /// </summary>
         public abstract float3 GetRecentSpeed();
 
-        [BurstCompile]
+       [BurstCompile]
         public abstract float GetSpeedDamageMultiplier();
 
         public float GetBaseDamage() => _damageScaleMethod.GetBaseDamage();
@@ -95,6 +94,7 @@ namespace H1M4W4R1.LUNA.Weapons
         /// <summary>
         /// Find closest damage vector based on attack point and normalized direction
         /// </summary>
+        [BurstCompile]
         public WeaponDamageVector FindClosestDamageVector(in float3 collisionPoint,
             in float3 collisionNormal)
         {
@@ -106,6 +106,7 @@ namespace H1M4W4R1.LUNA.Weapons
         /// <summary>
         /// Find closest damage vector based on attack point and normalized direction
         /// </summary>
+        [BurstCompile]
         private WeaponDamageVector FindClosestDamageVector(
             in float3 position,
             in quaternion rotation,
@@ -121,6 +122,8 @@ namespace H1M4W4R1.LUNA.Weapons
             var closestStruct = default(WeaponDamageVector);
             var minScore = float.MaxValue;
 
+            // INFO: This seems to be compiled with burst, but List<> should not be compatible with it,
+            // maybe Burst does it differently?
             foreach (var currentStruct in damageVectors)
             {
                 // Calculate angle difference (cosine similarity between **normalized** vectors)

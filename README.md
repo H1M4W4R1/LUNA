@@ -70,5 +70,6 @@ Types of damage systems:
 
 # Planned features
 * Demo scene
-* In-Editor Weapon Editor
-* Custom Inspectors
+
+# Known issues
+Check GitHub issue tracker.

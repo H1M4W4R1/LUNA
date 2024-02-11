@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace H1M4W4R1.LUNA.Weapons.Components
 {
+    // BUG: this class causes crash on Play-Stop when MonoBehaviour is selected and inspector is not visible all time
     /// <summary>
     /// Deals weapon damage when weapon triggers with damageable object.
     /// Use <see cref="WeaponDamageOnCollision"/> when possible.
