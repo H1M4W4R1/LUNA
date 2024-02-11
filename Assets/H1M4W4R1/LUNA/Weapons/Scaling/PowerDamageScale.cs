@@ -11,12 +11,11 @@ namespace H1M4W4R1.LUNA.Weapons.Scaling
     public struct PowerDamageScale : IDamageScaleMethod
     {
         public float baseDamage;
-        public int power;
-        
+
         [BurstCompile]
         public float CalculateScaleFrom(in float speedMultiplier)
         {
-            return math.pow(speedMultiplier, power) * baseDamage;
+            return math.pow(speedMultiplier, 2) * baseDamage;
         }
         
         public float GetBaseDamage() => baseDamage;

@@ -21,9 +21,6 @@ namespace H1M4W4R1.LUNA.Weapons
         
         [Tooltip("Flat damage of this weapon - aka. base damage")]
         public float flatDamage;
-        
-        [Tooltip("Power for damage scaling computation, used in DamageScaleMethod.Power")]
-        public int damagePower;
 
         [Tooltip("Weapon vulnerability scaling")]
         public VulnerabilityScaling vulnerabilityScaling = VulnerabilityScaling.Multiplicative;
@@ -68,8 +65,8 @@ namespace H1M4W4R1.LUNA.Weapons
                 case DamageScaleMethod.Linear:
                     _damageScaleMethod = new LinearDamageScale() {baseDamage = flatDamage};
                     break;
-                case DamageScaleMethod.Power:
-                    _damageScaleMethod = new PowerDamageScale() {baseDamage = flatDamage, power = damagePower};
+                case DamageScaleMethod.Quadratic:
+                    _damageScaleMethod = new PowerDamageScale() {baseDamage = flatDamage};
                     break;
                 case DamageScaleMethod.Exponential:
                     _damageScaleMethod = new ExponentialDamageScale() {baseDamage = flatDamage};

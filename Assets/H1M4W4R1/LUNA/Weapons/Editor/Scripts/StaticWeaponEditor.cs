@@ -6,8 +6,8 @@ using UnityEngine.UIElements;
 
 namespace H1M4W4R1.LUNA.Weapons.Editor.Scripts
 {
-    [CustomEditor(typeof(Hitbox))]
-    public class HitboxEditor : UnityEditor.Editor
+    [CustomEditor(typeof(StaticWeapon))]
+    public class StaticWeaponEditor : UnityEditor.Editor
     {
         [SerializeField]
         VisualTreeAsset editorAsset;

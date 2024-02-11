@@ -4,7 +4,7 @@
     {
         Flat,
         Linear,
-        Power,
+        Quadratic,
         Exponential
     }
 }

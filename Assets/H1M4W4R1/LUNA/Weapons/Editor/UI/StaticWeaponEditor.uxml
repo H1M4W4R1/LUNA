@@ -1,0 +1,12 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Label text="Damage" style="font-size: 18px;" />
+    <ui:FloatField label="Base damage" value="10" data-source-type="H1M4W4R1.LUNA.Weapons.StaticWeapon, Assembly-CSharp" data-source-path="flatDamage" focusable="false" binding-path="flatDamage" tooltip="Base damage of this weapon" />
+    <ui:EnumField label="Damage scaling" value="Linear" type="H1M4W4R1.LUNA.Weapons.Scaling.DamageScaleMethod, Assembly-CSharp" data-source-type="H1M4W4R1.LUNA.Weapons.StaticWeapon, Assembly-CSharp" data-source-path="damageScaleMethod" binding-path="damageScaleMethod" tooltip="Method of speed scaling for damage" />
+    <ui:Label text="Vulnerability" style="font-size: 18px; margin-top: 12px;" />
+    <ui:EnumField label="Damage type" type="H1M4W4R1.LUNA.Weapons.Damage.DamageType, Assembly-CSharp" data-source-type="H1M4W4R1.LUNA.Weapons.StaticWeapon, Assembly-CSharp" data-source-path="damageType" tooltip="Type of damage for all attacks with this weapon" binding-path="damageType" include-obsolete-values="false" />
+    <ui:EnumField label="Vulnerability scaling" value="Multiplicative" type="H1M4W4R1.LUNA.Weapons.Damage.VulnerabilityScaling, Assembly-CSharp" tooltip="Tactic to combine vulnerabilities of hitbox" data-source-type="H1M4W4R1.LUNA.Weapons.StaticWeapon, Assembly-CSharp" data-source-path="vulnerabilityScaling" binding-path="vulnerabilityScaling" />
+    <ui:Label text="Computation" style="font-size: 18px; margin-top: 12px;" />
+    <ui:FloatField label="Distance weight" value="1" data-source-type="H1M4W4R1.LUNA.Weapons.StaticWeapon, Assembly-CSharp" data-source-path="distanceWeight" binding-path="distanceWeight" />
+    <ui:FloatField label="Angle weight" value="5" data-source-type="H1M4W4R1.LUNA.Weapons.StaticWeapon, Assembly-CSharp" data-source-path="angleWeight" binding-path="angleWeight" />
+    <ui:Toggle label="360-mode" data-source-type="H1M4W4R1.LUNA.Weapons.StaticWeapon, Assembly-CSharp" data-source-path="directionMatters" binding-path="directionMatters" tooltip="Enables [0-360] calculation instead of [0-180]" />
+</ui:UXML>

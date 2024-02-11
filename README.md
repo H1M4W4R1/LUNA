@@ -36,8 +36,8 @@ Damage will always be equal to base damage. Simple as that. (Sometimes may be us
 ### Linear damage scaling
 Damage is equal to base damage multiplied by speed factor. Eg. if speed factor is 20 and base damage is 10 then result is 10*20 = 200 DMG.
 
-### Power damage scaling
-Damage is equal to base damage multiplied by speed factor to nTh power. Eg if speed factor is 10 and base damage is 10, power is 2 then result is 10*10^2 = 1000 DMG.
+### Quadratic damage scaling
+Damage is equal to base damage multiplied by speed factor to nTh power. Eg if speed factor is 10 and base damage is 5 then result is 5*10^2 = 500 DMG.
 
 ### Exponential damage scaling
 Damage is scaled exponentially - base damage is brought to power of speed factor eg. base damage is 10 and speed factor is 5 then damage is 10e5 DMG. This is good for nuclear blast :D
