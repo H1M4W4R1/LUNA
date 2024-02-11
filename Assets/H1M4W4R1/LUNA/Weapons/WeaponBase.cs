@@ -3,6 +3,7 @@ using H1M4W4R1.LUNA.Weapons.Computation;
 using H1M4W4R1.LUNA.Weapons.Damage;
 using H1M4W4R1.LUNA.Weapons.Scaling;
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -58,7 +59,7 @@ namespace H1M4W4R1.LUNA.Weapons
         /// </summary>
         public abstract float3 GetRecentSpeed();
 
-       [BurstCompile]
+        [BurstCompile]
         public abstract float GetSpeedDamageMultiplier();
 
         public float GetBaseDamage() => _damageScaleMethod.GetBaseDamage();
@@ -105,8 +106,10 @@ namespace H1M4W4R1.LUNA.Weapons
         
         /// <summary>
         /// Find closest damage vector based on attack point and normalized direction
+        /// TODO: Implement Burst compatibility
         /// </summary>
         [BurstCompile]
+        [NotBurstCompatible]
         private WeaponDamageVector FindClosestDamageVector(
             in float3 position,
             in quaternion rotation,

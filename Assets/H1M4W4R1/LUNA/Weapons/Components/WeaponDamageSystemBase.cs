@@ -1,6 +1,7 @@
 ﻿using H1M4W4R1.LUNA.Entities;
 using H1M4W4R1.LUNA.Weapons.Damage;
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ namespace H1M4W4R1.LUNA.Weapons.Components
     /// Represents basic weapon subsystem that is responsible for detecting damage occurence.
     /// It can be for example: when weapon collides with enemy or when enemy enters trigger.
     /// </summary>
+    [BurstCompile]
     public abstract class WeaponDamageSystemBase : MonoBehaviour
     {
         private WeaponBase _weapon;
@@ -23,8 +25,10 @@ namespace H1M4W4R1.LUNA.Weapons.Components
 
         /// <summary>
         /// Process this damage system
+        /// TODO: implement Burst compatibility
         /// </summary>
         [BurstCompile]
+        [NotBurstCompatible]
         public void Process(in HitboxData hitbox, in float3 position, in float3 normalVector, out DamageInfo dmgInfo)
         {
             // Get collision information and damage type

@@ -12,6 +12,7 @@ namespace H1M4W4R1.LUNA.Entities
         [Tooltip("Damage will be multiplied if this hitbox is hit")]
         public float baseDamageMultiplier;
 
+        
         public List<DamageVulnerability> vulnerabilities;
         public List<DamageResistance> resistances;
 
