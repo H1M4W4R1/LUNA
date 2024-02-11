@@ -1,5 +1,6 @@
 ﻿using System;
 using H1M4W4R1.LUNA.Weapons.Damage;
+using Unity.Burst;
 using Unity.Mathematics;
 
 namespace H1M4W4R1.LUNA.Weapons.Computation
@@ -11,6 +12,7 @@ namespace H1M4W4R1.LUNA.Weapons.Computation
     /// * blade tip - which should deal piercing damage
     /// </summary>
     [Serializable]
+    [BurstCompile]
     public struct WeaponDamageVector
     {
         /// <summary>
@@ -21,12 +23,14 @@ namespace H1M4W4R1.LUNA.Weapons.Computation
         /// <summary>
         /// Normalized directional vector for damage computation
         /// </summary>
-        public float3 relativeVectorNormalized;
+        public quaternion vectorRotation;
 
         /// <summary>
         /// Computes relative vector based by specified rotation of object
         /// </summary>
-        public float3 GetVectorForRotation(quaternion objectRotation) => math.rotate(objectRotation, relativeVectorNormalized);
+        [BurstCompile]
+        public float3 GetVectorForRotation(quaternion objectRotation) => 
+            math.rotate(objectRotation, math.rotate(vectorRotation, new float3(0, 0, 1)));
 
         /// <summary>
         /// Vector damage type

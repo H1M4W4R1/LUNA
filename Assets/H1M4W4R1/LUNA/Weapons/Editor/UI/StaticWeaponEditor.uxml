@@ -9,4 +9,6 @@
     <ui:FloatField label="Distance weight" value="1" data-source-type="H1M4W4R1.LUNA.Weapons.StaticWeapon, Assembly-CSharp" data-source-path="distanceWeight" binding-path="distanceWeight" />
     <ui:FloatField label="Angle weight" value="5" data-source-type="H1M4W4R1.LUNA.Weapons.StaticWeapon, Assembly-CSharp" data-source-path="angleWeight" binding-path="angleWeight" />
     <ui:Toggle label="360-mode" data-source-type="H1M4W4R1.LUNA.Weapons.StaticWeapon, Assembly-CSharp" data-source-path="directionMatters" binding-path="directionMatters" tooltip="Enables [0-360] calculation instead of [0-180]" />
+    <ui:Label text="Vectors" style="font-size: 18px; margin-top: 12px;" />
+    <ui:ListView item-template="project://database/Assets/H1M4W4R1/LUNA/Weapons/Editor/UI/WeaponDamageVectorListItem.uxml?fileID=9197481963319205126&amp;guid=3a654aa70e4f35d46a4fa67847faa817&amp;type=3#WeaponDamageVectorListItem" show-bound-collection-size="false" show-add-remove-footer="true" allow-remove="true" data-source-type="H1M4W4R1.LUNA.Weapons.StaticWeapon, Assembly-CSharp" data-source-path="damageVectors" binding-path="damageVectors" name="vectorsList" focusable="true" virtualization-method="DynamicHeight" show-border="true" />
 </ui:UXML>

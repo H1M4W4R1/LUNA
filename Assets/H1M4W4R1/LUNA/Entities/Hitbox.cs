@@ -30,16 +30,8 @@ namespace H1M4W4R1.LUNA.Entities
         public virtual void DealDamage(ref DamageInfo info)
         {
             onHit.Invoke(info);
-        }
-
-        [ContextMenu("Log data")]
-        public void LogData()
-        {
-            foreach(var vul in data.vulnerabilities)
-                Debug.Log($"Vulnerability {vul.typeOfDamage} x{vul.damageMultiplier}");
             
-            foreach(var res in data.resistances)
-                Debug.Log($"Resistance {res.typeOfDamage} x{res.damageAntiMultiplier}");
+            Debug.Log("RECEIVED: " + info.damageType + " with amount of " + info.damageAmount);
         }
     }
 }

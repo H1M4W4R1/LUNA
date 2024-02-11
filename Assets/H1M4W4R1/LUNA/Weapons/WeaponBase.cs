@@ -5,6 +5,7 @@ using H1M4W4R1.LUNA.Weapons.Scaling;
 using Unity.Burst;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace H1M4W4R1.LUNA.Weapons
 {
@@ -14,6 +15,12 @@ namespace H1M4W4R1.LUNA.Weapons
     [BurstCompile]
     public abstract class WeaponBase : MonoBehaviour
     {
+        // NOTE: This is bad, but I don't care. I need this field to be shared between Tool and Editor
+        // And accessing one from another is even worse cause it comes to reflection
+        #if UNITY_EDITOR
+        public int selectedIndex;
+        #endif
+        
         protected IDamageScaleMethod _damageScaleMethod; // Internal structural dependency
 
         [Tooltip("Type of damage scaling for this weapon")]
@@ -40,7 +47,13 @@ namespace H1M4W4R1.LUNA.Weapons
         /// </summary>
         [SerializeField]
         private List<WeaponDamageVector> damageVectors = new List<WeaponDamageVector>();
-        
+
+        public bool HasVectors => damageVectors.Count > 0;
+
+        public List<WeaponDamageVector> GetVectors() => damageVectors;
+
+        public void AddVector(ref WeaponDamageVector vector) => damageVectors.Add(vector);
+
         /// <summary>
         /// Get current speed of this weapon.
         /// </summary>
@@ -82,7 +95,6 @@ namespace H1M4W4R1.LUNA.Weapons
         /// <summary>
         /// Find closest damage vector based on attack point and normalized direction
         /// </summary>
-        [BurstCompile]
         public WeaponDamageVector FindClosestDamageVector(in float3 collisionPoint,
             in float3 collisionNormal)
         {
@@ -94,7 +106,6 @@ namespace H1M4W4R1.LUNA.Weapons
         /// <summary>
         /// Find closest damage vector based on attack point and normalized direction
         /// </summary>
-        [BurstCompile]
         private WeaponDamageVector FindClosestDamageVector(
             in float3 position,
             in quaternion rotation,

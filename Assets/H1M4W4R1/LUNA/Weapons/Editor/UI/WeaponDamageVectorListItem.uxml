@@ -1,0 +1,4 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:EnumField label="Damage Type" type="H1M4W4R1.LUNA.Weapons.Damage.DamageType, Assembly-CSharp" data-source-type="H1M4W4R1.LUNA.Weapons.Computation.WeaponDamageVector, Assembly-CSharp" data-source-path="damageType" binding-path="damageType" focusable="false" />
+    <ui:GroupBox />
+</ui:UXML>
