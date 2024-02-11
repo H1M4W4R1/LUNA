@@ -122,8 +122,7 @@ namespace H1M4W4R1.LUNA.Weapons
             var closestStruct = default(WeaponDamageVector);
             var minScore = float.MaxValue;
 
-            // INFO: This seems to be compiled with burst, but List<> should not be compatible with it,
-            // maybe Burst does it differently?
+            // INFO: NVM forgot that Burst does not compile from managed objects.
             foreach (var currentStruct in damageVectors)
             {
                 // Calculate angle difference (cosine similarity between **normalized** vectors)
