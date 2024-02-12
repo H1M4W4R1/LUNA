@@ -350,12 +350,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   selectedIndex: -1
   weaponData:
-    damageScaleMethod: 1
+    damageScaleMethod: 2
     flatDamage: 10
-    vulnerabilityScaling: 2
-    damageType: 0
-    distanceWeight: 0
-    angleWeight: 0
+    vulnerabilityScaling: 3
+    damageType: 268435456
+    distanceWeight: 1
+    angleWeight: 5
     directionMatters: 1
     expectedAttackTime: 0
     currentSpeed:

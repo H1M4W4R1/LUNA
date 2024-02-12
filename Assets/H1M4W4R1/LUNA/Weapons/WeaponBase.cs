@@ -32,7 +32,10 @@ namespace H1M4W4R1.LUNA.Weapons
             damageType = DamageType.None,
             flatDamage = 10,
             directionMatters = true,
-            vulnerabilityScaling = VulnerabilityScaling.Multiplicative
+            vulnerabilityScaling = VulnerabilityScaling.Multiplicative,
+            distanceWeight = 1,
+            angleWeight = 5,
+            expectedAttackTime = 0.1f
         };
       
         /// <summary>
