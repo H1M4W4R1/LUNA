@@ -3,6 +3,7 @@ using H1M4W4R1.LUNA.Weapons.Burst;
 using H1M4W4R1.LUNA.Weapons.Damage;
 using H1M4W4R1.LUNA.Weapons.Data;
 using H1M4W4R1.LUNA.Weapons.Jobs;
+using H1M4W4R1.LUNA.Weapons.Jobs.Data;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
@@ -29,8 +30,15 @@ namespace H1M4W4R1.LUNA.Weapons.Components
 
         protected DamageInfo Process(HitboxData hitbox, float3 pos, quaternion rot, float3 hitPos, float3 hitNormal)
         {
-            ProcessWeaponHitJob.Prepare(_weapon.GetData(), hitbox, pos, rot, hitPos, hitNormal,
-                out var job);
+            ProcessWeaponHitJob.Prepare(new WeaponHitData()
+                {
+                    weaponData = _weapon.GetData(),
+                    hitboxData = hitbox,
+                    hitNormal = hitNormal,
+                    hitPos = hitPos,
+                    weaponPos = pos,
+                    weaponRotation = rot
+                }, out var job);
             job.Schedule().Complete();
             
             // Copy value of damage info

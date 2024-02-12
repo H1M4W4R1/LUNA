@@ -1,6 +1,7 @@
 ﻿using H1M4W4R1.LUNA.Weapons.Burst;
 using H1M4W4R1.LUNA.Weapons.Data;
 using H1M4W4R1.LUNA.Weapons.Jobs;
+using H1M4W4R1.LUNA.Weapons.Jobs.Data;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
@@ -42,7 +43,14 @@ namespace H1M4W4R1.LUNA.Weapons
             var dt = Time.deltaTime;
 
             // Run the job and update data
-            UpdateWeaponSpeedDataJob.Prepare(dt, weaponData, pos, _previousPosition, out var job);
+            UpdateWeaponSpeedDataJob.Prepare(
+                new WeaponMovementData()
+                {
+                    weaponData = weaponData,
+                    deltaTime = dt,
+                    position = pos,
+                    previousPosition = _previousPosition
+                }, out var job);
             
             // Run job and wait for completion
             job.Schedule().Complete();

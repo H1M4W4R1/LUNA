@@ -1,5 +1,6 @@
 ﻿using H1M4W4R1.LUNA.Weapons.Burst;
 using H1M4W4R1.LUNA.Weapons.Data;
+using H1M4W4R1.LUNA.Weapons.Jobs.Data;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
@@ -8,71 +9,67 @@ using UnityEngine;
 
 namespace H1M4W4R1.LUNA.Weapons.Jobs
 {
+    /// <summary>
+    /// Represents a request to update weapon speed data.
+    /// Should be called "Every frame" (either game or system frame)
+    /// </summary>
     [BurstCompatible] [BurstCompile] 
     public struct UpdateWeaponSpeedDataJob : IJob, INativeDisposable
     {
-        private float _deltaTime;
-        private NativeReference<WeaponData> _weaponData;
-        private NativeReference<float3> _position;
-        private NativeReference<float3> _previousPosition;
+        private NativeReference<WeaponMovementData> _movementData;
 
         [BurstCompatible]
         public static void Prepare(
-            in float dt, 
-            in WeaponData weaponData,
-            in float3 position,
-            in float3 previousPosition,
+            in WeaponMovementData movementData,
             out UpdateWeaponSpeedDataJob job)
         {
             job = new UpdateWeaponSpeedDataJob()
             {
-                _deltaTime = dt,
-                _weaponData = new NativeReference<WeaponData>(weaponData, Allocator.TempJob),
-                _position = new NativeReference<float3>(position, Allocator.TempJob),
-                _previousPosition = new NativeReference<float3>(previousPosition, Allocator.TempJob)
+                _movementData = new NativeReference<WeaponMovementData>(movementData, Allocator.TempJob)
             };
         }
         
         public void Execute()
         {
             // Update weapon data
-            CalculateSpeedFactor(_position.Value, _deltaTime);
+            var value = _movementData.Value;
+            CalculateSpeedFactor(ref value);
+            _movementData.Value = value;
         }
 
         public void Dispose()
         {
-            _weaponData.Dispose();
-            _position.Dispose();
-            _previousPosition.Dispose();
+            _movementData.Dispose();
         }
 
-        public JobHandle Dispose(JobHandle inputDeps) =>
-            _weaponData.Dispose(_previousPosition.Dispose(_position.Dispose(inputDeps)));
+        public JobHandle Dispose(JobHandle inputDeps)
+        {
+            _movementData.Dispose();
+            return inputDeps;
+        }
         
         [BurstCompile] [BurstCompatible]
-        private void CalculateSpeedFactor(in float3 currentPosition, in float deltaTime)
+        private void CalculateSpeedFactor(ref WeaponMovementData movementData)
         {
             // Compute position and speed
-            var currentSpeed = (currentPosition - _previousPosition.Value) / deltaTime;
+            var currentSpeed = (movementData.position - movementData.previousPosition) / movementData.deltaTime;
 
-            // Update averaged speed
-            var value = _weaponData.Value;
+            var wData = movementData.weaponData;
             
             // Moving average formula using LERP
-            var weight = value.expectedAttackTime > 0 ? math.clamp(deltaTime / value.expectedAttackTime, 0f, 1f) : 1f;
-            value.currentSpeed = math.lerp(value.currentSpeed, currentSpeed, weight);
-            
-            // Update weapon value
-            _weaponData.Value = value;
+            var weight = wData.expectedAttackTime > 0 ? math.clamp(movementData.deltaTime / wData.expectedAttackTime, 0f, 1f) : 1f;
+            wData.currentSpeed = math.lerp(wData.currentSpeed, currentSpeed, weight);
+
+            movementData.weaponData = wData;
             
             // Update previous position and time for the next frame
-            _previousPosition.Value = currentPosition;
+            movementData.previousPosition = movementData.position;
         }
 
         public float3 GetCurrentSpeed() =>
-            _weaponData.Value.currentSpeed;
+            _movementData.Value.weaponData.currentSpeed;
 
-        public float3 GetPreviousPosition() => _previousPosition.Value;
+        public float3 GetPreviousPosition() => _movementData.Value.previousPosition;
 
     }
 }
