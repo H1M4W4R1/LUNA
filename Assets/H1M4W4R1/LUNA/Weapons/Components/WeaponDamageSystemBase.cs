@@ -26,14 +26,14 @@ namespace H1M4W4R1.LUNA.Weapons.Components
         }
 
         /// <summary>
-        /// Process this damage system
+        /// Process this damage system 
         /// TODO: implement Burst compatibility
         /// </summary>
         [BurstCompile]
         [NotBurstCompatible]
-        public unsafe void Process(
-            in WeaponData weaponData, 
-            in HitboxData hitbox, 
+        public void Process(
+            ref WeaponData weaponData, 
+            ref HitboxData hitbox, 
             in float3 objectPosition,
             in quaternion objectRotation,
             in float3 eventPosition, 
@@ -41,7 +41,7 @@ namespace H1M4W4R1.LUNA.Weapons.Components
             out DamageInfo dmgInfo)
         {
             // Get vector information
-            WeaponDamageVectorCalculation.FindClosestDamageVector(&weaponData, objectPosition, objectRotation,
+            WeaponDamageVectorCalculation.FindClosestDamageVector(ref weaponData, objectPosition, objectRotation,
                 eventPosition, normalVector, out var dVector);
             
             // Evaluate damage type via combination

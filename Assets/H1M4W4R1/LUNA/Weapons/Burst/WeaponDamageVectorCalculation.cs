@@ -8,7 +8,7 @@ using UnityEngine;
 namespace H1M4W4R1.LUNA.Weapons.Burst
 {
     [BurstCompile] [BurstCompatible]
-    public static unsafe class WeaponDamageVectorCalculation
+    public static class WeaponDamageVectorCalculation
     {
         /// <summary>
         /// Find closest damage vector based on attack point and normalized direction
@@ -16,7 +16,7 @@ namespace H1M4W4R1.LUNA.Weapons.Burst
         [BurstCompile]
         [BurstCompatible]
         public static void FindClosestDamageVector(
-            WeaponData* weaponData,
+            ref WeaponData data,
             in float3 position,
             in quaternion rotation,
             in float3 collisionPoint,
@@ -24,10 +24,7 @@ namespace H1M4W4R1.LUNA.Weapons.Burst
             out WeaponDamageVector closestStruct)
         {
             closestStruct = default(WeaponDamageVector);
-            if (weaponData == null) return; // NOTE: This is BAD, but we don't wanna random segfault
-            
-            var data = *weaponData;
-            
+
             if(data.damageVectors.Length < 1)
                 Debug.LogError("[LUNA] Weapon must have at least one damage vector. Otherwise it's useless!");
 

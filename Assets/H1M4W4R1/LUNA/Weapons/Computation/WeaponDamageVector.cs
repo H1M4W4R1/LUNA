@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using H1M4W4R1.LUNA.Weapons.Damage;
 using Unity.Burst;
 using Unity.Mathematics;
@@ -27,7 +28,7 @@ namespace H1M4W4R1.LUNA.Weapons.Computation
         /// <summary>
         /// Computes relative vector based by specified rotation of object
         /// </summary>
-       [BurstCompile]
+        [BurstCompile]
         public float3 GetVectorForRotation(quaternion objectRotation) => 
             math.rotate(objectRotation, math.rotate(vectorRotation, new float3(0, 0, 1)));
 

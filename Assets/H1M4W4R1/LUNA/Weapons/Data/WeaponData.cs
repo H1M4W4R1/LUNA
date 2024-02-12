@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using H1M4W4R1.LUNA.Weapons.Computation;
 using H1M4W4R1.LUNA.Weapons.Damage;
 using H1M4W4R1.LUNA.Weapons.Scaling;
 using Unity.Burst;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
@@ -28,11 +30,12 @@ namespace H1M4W4R1.LUNA.Weapons.Data
         public float angleWeight;
 
         [Tooltip("If false then opposing vectors will be considered to have same angle (angle will be computed in [0,π] range)")]
+        [MarshalAs(UnmanagedType.U1)]
         public bool directionMatters;
 
         public float expectedAttackTime;
 
-        public NativeList<WeaponDamageVector> damageVectors;
+        public UnsafeList<WeaponDamageVector> damageVectors;
 
         // Real-time computed variables
         public float3 currentSpeed;
@@ -40,7 +43,7 @@ namespace H1M4W4R1.LUNA.Weapons.Data
         
         [NotBurstCompatible]
         public void RegisterVectors(List<WeaponDamageVector> vectors) =>
-            damageVectors = new NativeList<WeaponDamageVector>(vectors.Count, Allocator.Domain);
+            damageVectors = new UnsafeList<WeaponDamageVector>(vectors.Count, Allocator.Domain);
         
         [BurstCompile] [BurstCompatible]
         public float GetSpeedDamageMultiplier() => speedDamageMultiplier;

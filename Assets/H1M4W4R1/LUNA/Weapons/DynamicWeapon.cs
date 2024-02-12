@@ -1,7 +1,9 @@
 ﻿using H1M4W4R1.LUNA.Weapons.Burst;
 using H1M4W4R1.LUNA.Weapons.Data;
+using H1M4W4R1.LUNA.Weapons.Jobs;
 using Unity.Burst;
 using Unity.Collections;
+using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -38,23 +40,16 @@ namespace H1M4W4R1.LUNA.Weapons
             
             var pos = (float3) transform.position;
             var dt = Time.deltaTime;
+
+            UpdateWeaponSpeedDataJob.Prepare(dt, ref _weaponData, _weaponData.currentSpeed, pos,
+                ref _previousPosition, out var job);
             
-            // TODO: JOB!
-            CalculateSpeedFactor(pos, dt, out _previousPosition);
+            // Run job and wait for completion
+            job.Schedule().Complete();
+            job.Dispose();
         }
 
-        [BurstCompile] [BurstCompatible]
-        private unsafe void CalculateSpeedFactor(in float3 currentPosition, in float deltaTime, out float3 previousPosition)
-        {
-            // Compute position and speed
-            var currentSpeed = (currentPosition - _previousPosition) / deltaTime;
-
-            // Update averaged speed
-            WeaponCalculation.UpdateWeaponSpeed(&_weaponData, currentSpeed, deltaTime);
-
-            // Update previous position and time for the next frame
-            previousPosition = currentPosition;
-        }
+    
         
         
     }

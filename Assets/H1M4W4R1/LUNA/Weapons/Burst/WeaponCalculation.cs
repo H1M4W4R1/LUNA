@@ -9,9 +9,8 @@ namespace H1M4W4R1.LUNA.Weapons.Burst
     public static class WeaponCalculation
     {
         [BurstCompile] [BurstCompatible]
-        public static unsafe void UpdateWeaponSpeed(WeaponData* weaponData, in float3 currentSpeed, in float deltaTime)
+        public static void UpdateWeaponSpeed(ref WeaponData data, in float3 currentSpeed, in float deltaTime)
         {
-            var data = *weaponData;
             
             // Moving average formula using LERP 
             var weight = math.clamp(deltaTime / data.expectedAttackTime, 0f, 1f);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using H1M4W4R1.LUNA.Weapons.Damage;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using UnityEngine;
 
@@ -13,16 +14,16 @@ namespace H1M4W4R1.LUNA.Entities
         [Tooltip("Damage will be multiplied if this hitbox is hit")]
         public float baseDamageMultiplier;
         
-        public NativeList<DamageVulnerability> vulnerabilities;
-        public NativeList<DamageResistance> resistances;
+        public UnsafeList<DamageVulnerability> vulnerabilities;
+        public UnsafeList<DamageResistance> resistances;
 
         [NotBurstCompatible]
         public void RegisterVulnerabilities(List<DamageVulnerability> data) =>
-            vulnerabilities = new NativeList<DamageVulnerability>(data.Count, Allocator.Domain);
+            vulnerabilities = new UnsafeList<DamageVulnerability>(data.Count, Allocator.Domain);
         
         [NotBurstCompatible]
         public void RegisterResistances(List<DamageResistance> data) =>
-            resistances = new NativeList<DamageResistance>(data.Count, Allocator.Domain);
+            resistances = new UnsafeList<DamageResistance>(data.Count, Allocator.Domain);
 
         public void Dispose()
         {
