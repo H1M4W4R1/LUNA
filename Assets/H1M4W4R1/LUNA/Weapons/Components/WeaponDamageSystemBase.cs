@@ -2,8 +2,10 @@
 using H1M4W4R1.LUNA.Weapons.Burst;
 using H1M4W4R1.LUNA.Weapons.Damage;
 using H1M4W4R1.LUNA.Weapons.Data;
+using H1M4W4R1.LUNA.Weapons.Jobs;
 using Unity.Burst;
 using Unity.Collections;
+using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -25,109 +27,16 @@ namespace H1M4W4R1.LUNA.Weapons.Components
             _transform = transform;
         }
 
-        /// <summary>
-        /// Process this damage system 
-        /// TODO: implement Burst compatibility
-        /// </summary>
-        [BurstCompile]
-        [NotBurstCompatible]
-        public void Process(
-            ref WeaponData weaponData, 
-            ref HitboxData hitbox, 
-            in float3 objectPosition,
-            in quaternion objectRotation,
-            in float3 eventPosition, 
-            in float3 normalVector, 
-            out DamageInfo dmgInfo)
+        protected DamageInfo Process(HitboxData hitbox, float3 pos, quaternion rot, float3 hitPos, float3 hitNormal)
         {
-            // Get vector information
-            WeaponDamageVectorCalculation.FindClosestDamageVector(ref weaponData, objectPosition, objectRotation,
-                eventPosition, normalVector, out var dVector);
+            ProcessWeaponHitJob.Prepare(_weapon.GetData(), hitbox, pos, rot, hitPos, hitNormal,
+                out var job);
+            job.Schedule().Complete();
             
-            // Evaluate damage type via combination
-            var damageType = dVector.damageType | weaponData.damageType;
-            
-            // Compute damage for this weapon
-            var damage = weaponData.GetSpeedDamageMultiplier(); // Speed multiplier and IDamageScaleMethod
-            var damageMultVulnerability = 0f;
-            var damageMultResistance = 0f;
-            
-            // INFO: NVM forgot that Burst does not compile from managed objects.
-            
-            // Check for vulnerabilities
-            foreach (var vulnerability in hitbox.vulnerabilities)
-            {
-                if (!vulnerability.IsVulnerableTo(damageType)) continue;
-
-                // Compute scaling
-                switch (weaponData.vulnerabilityScaling)
-                {
-                    case VulnerabilityScaling.None:
-                        if (vulnerability.damageMultiplier > damageMultVulnerability)
-                            damageMultVulnerability = vulnerability.damageMultiplier;
-                        break;
-                    case VulnerabilityScaling.Additive:
-                        damageMultVulnerability += vulnerability.damageMultiplier;
-                        break;
-                    case VulnerabilityScaling.Multiplicative:
-                        damageMultVulnerability = damageMultVulnerability == 0f
-                            ? vulnerability.damageMultiplier
-                            : damageMultVulnerability * vulnerability.damageMultiplier;
-                        // damage *= vulnerability.damageMultiplier;
-                        break;
-                    case VulnerabilityScaling.Exponential:
-                        damageMultVulnerability = damageMultVulnerability == 0f ? 
-                            vulnerability.damageMultiplier : math.pow(damageMultVulnerability, vulnerability.damageMultiplier);
-                        // damage = math.pow(damage, vulnerability.damageMultiplier);
-                        break;
-                }
-            }
-            
-            // Check for resistances
-            foreach (var resistance in hitbox.resistances)
-            {
-                if (!resistance.IsResistantTo(damageType)) continue;
-
-                // Compute scaling
-                switch (weaponData.vulnerabilityScaling)
-                {
-                    case VulnerabilityScaling.None:
-                        if (resistance.damageAntiMultiplier > damageMultResistance)
-                            damageMultResistance = resistance.damageAntiMultiplier;
-                        break;
-                    case VulnerabilityScaling.Additive:
-                        damageMultResistance += resistance.damageAntiMultiplier;
-                        break;
-                    case VulnerabilityScaling.Multiplicative:
-                        damageMultResistance = damageMultResistance == 0f
-                            ? resistance.damageAntiMultiplier
-                            : damageMultResistance * resistance.damageAntiMultiplier;
-                        // damage /= resistance.damageAntiMultiplier;
-                        break;
-                    case VulnerabilityScaling.Exponential:
-                        damageMultResistance = damageMultResistance == 0f ? 
-                            resistance.damageAntiMultiplier : math.pow(damageMultResistance, resistance.damageAntiMultiplier);
-                        // damage = math.pow(damage, 1f / resistance.damageAntiMultiplier);
-                        break;
-                }
-            }
-
-            // Mult damage by vulnerability
-            if (damageMultVulnerability > 0f)
-                damage *= damageMultVulnerability;
-            if (damageMultResistance > 0f)
-                damage /= damageMultResistance;
-
-            // And all other multipliers
-            damage *= hitbox.baseDamageMultiplier;
-
-            // Deal damage
-            dmgInfo = new DamageInfo()
-            {
-                damageAmount = damage,
-                damageType = damageType,
-                weapon = _weapon
-            };
+            // Copy value of damage info
+            var dmgInfo = job.GetDamageInfo();
+            job.Dispose();
+            return dmgInfo;
         }
     }
 }

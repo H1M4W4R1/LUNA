@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using H1M4W4R1.LUNA.Weapons.Computation;
 using H1M4W4R1.LUNA.Weapons.Damage;
@@ -12,6 +13,7 @@ using UnityEngine;
 
 namespace H1M4W4R1.LUNA.Weapons.Data
 {
+    [Serializable]
     public struct WeaponData : INativeDisposable
     {
         [Tooltip("Type of damage scaling for this weapon")]
@@ -40,11 +42,15 @@ namespace H1M4W4R1.LUNA.Weapons.Data
         // Real-time computed variables
         public float3 currentSpeed;
         public float speedDamageMultiplier;
-        
+
         [NotBurstCompatible]
-        public void RegisterVectors(List<WeaponDamageVector> vectors) =>
+        public void RegisterVectors(List<WeaponDamageVector> vectors)
+        {
             damageVectors = new UnsafeList<WeaponDamageVector>(vectors.Count, Allocator.Domain);
-        
+            foreach (var vector in vectors)
+                damageVectors.Add(vector);
+        }
+
         [BurstCompile] [BurstCompatible]
         public float GetSpeedDamageMultiplier() => speedDamageMultiplier;
         

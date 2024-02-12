@@ -34,7 +34,7 @@ namespace H1M4W4R1.LUNA.Entities
         {
             onHit.Invoke(info);
            
-            // Debug.Log("RECEIVED: " + info.damageType + " with amount of " + info.damageAmount);
+            Debug.Log("RECEIVED: " + info.damageType + " with amount of " + info.damageAmount);
         }
     }
 }

@@ -9,6 +9,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace H1M4W4R1.LUNA.Weapons
 {
@@ -25,7 +26,7 @@ namespace H1M4W4R1.LUNA.Weapons
         
         protected IDamageScaleMethod _damageScaleMethod; // Internal structural dependency
 
-        protected WeaponData _weaponData = new WeaponData()
+        [FormerlySerializedAs("_weaponData")] public WeaponData weaponData = new WeaponData()
         {
             damageScaleMethod = DamageScaleMethod.Linear,
             damageType = DamageType.None,
@@ -52,15 +53,17 @@ namespace H1M4W4R1.LUNA.Weapons
 
         public abstract float GetSpeedDamageMultiplier();
 
+        public WeaponData GetData() => weaponData;
+        
         /// <summary>
         /// Initialize weapon data
         /// </summary>
         private void Initialize()
         {
-            var flatDamage = _weaponData.flatDamage;
+            var flatDamage = weaponData.flatDamage;
             
             // Prepare damage scale system
-            switch (_weaponData.damageScaleMethod)
+            switch (weaponData.damageScaleMethod)
             {
                 case DamageScaleMethod.Flat:
                     _damageScaleMethod = new FlatDamageScale() {baseDamage = flatDamage};
@@ -80,19 +83,19 @@ namespace H1M4W4R1.LUNA.Weapons
         protected void Awake()
         {
             // Prepare weapon vectors
-            _weaponData.RegisterVectors(damageVectors);
+            weaponData.RegisterVectors(damageVectors);
             Initialize();
         }
 
         protected void Update()
         {
             // Update speed information
-            _weaponData.speedDamageMultiplier = GetSpeedDamageMultiplier();
+            weaponData.speedDamageMultiplier = GetSpeedDamageMultiplier();
         }
 
         private void OnDestroy()
         {
-            _weaponData.Dispose();
+            weaponData.Dispose();
         }
     }
 }

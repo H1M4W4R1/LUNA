@@ -20,9 +20,9 @@ namespace H1M4W4R1.LUNA.Weapons
         [Tooltip("How long it should take wielder to swing this thing to deal base damage")]
         public float expectedAttackTime = 5.0f;
         
-        public override float3 GetRecentSpeed() => _weaponData.currentSpeed;
+        public override float3 GetRecentSpeed() => weaponData.currentSpeed;
 
-        public override float GetSpeedDamageMultiplier() => _damageScaleMethod.CalculateScaleFrom(math.length(_weaponData.currentSpeed));
+        public override float GetSpeedDamageMultiplier() => _damageScaleMethod.CalculateScaleFrom(math.length(weaponData.currentSpeed));
 
         protected new void Awake()
         {
@@ -31,7 +31,7 @@ namespace H1M4W4R1.LUNA.Weapons
             
             // Initialize parameters
             _previousPosition = transform.position;
-            _weaponData.currentSpeed = float3.zero;
+            weaponData.currentSpeed = float3.zero;
         }
 
         protected new void Update()
@@ -41,11 +41,14 @@ namespace H1M4W4R1.LUNA.Weapons
             var pos = (float3) transform.position;
             var dt = Time.deltaTime;
 
-            UpdateWeaponSpeedDataJob.Prepare(dt, ref _weaponData, _weaponData.currentSpeed, pos,
-                ref _previousPosition, out var job);
+            // Run the job and update data
+            UpdateWeaponSpeedDataJob.Prepare(dt, weaponData, pos, _previousPosition, out var job);
             
             // Run job and wait for completion
             job.Schedule().Complete();
+            weaponData.currentSpeed = job.GetCurrentSpeed();
+            _previousPosition = job.GetPreviousPosition();
+            
             job.Dispose();
         }
 

@@ -269,13 +269,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectedIndex: 0
-  damageScaleMethod: 1
-  flatDamage: 10
-  vulnerabilityScaling: 2
-  damageType: 536870944
-  distanceWeight: 1
-  angleWeight: 5
-  directionMatters: 1
+  weaponData:
+    damageScaleMethod: 1
+    flatDamage: 10
+    vulnerabilityScaling: 2
+    damageType: 536870928
+    distanceWeight: 1
+    angleWeight: 5
+    directionMatters: 1
+    expectedAttackTime: 1
+    currentSpeed:
+      x: 0
+      y: 0
+      z: 0
+    speedDamageMultiplier: 0
   damageVectors:
   - startPoint:
       x: 0
@@ -342,13 +349,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectedIndex: -1
-  damageScaleMethod: 0
-  flatDamage: 0
-  vulnerabilityScaling: 2
-  damageType: 0
-  distanceWeight: 1
-  angleWeight: 5
-  directionMatters: 1
+  weaponData:
+    damageScaleMethod: 1
+    flatDamage: 10
+    vulnerabilityScaling: 2
+    damageType: 0
+    distanceWeight: 0
+    angleWeight: 0
+    directionMatters: 1
+    expectedAttackTime: 0
+    currentSpeed:
+      x: 0
+      y: 0
+      z: 0
+    speedDamageMultiplier: 0
   damageVectors:
   - startPoint:
       x: 0
@@ -594,14 +608,12 @@ MonoBehaviour:
       m_Calls: []
   data:
     baseDamageMultiplier: 1
-    vulnerabilities:
-    - typeOfDamage: 268435460
-      damageMultiplier: 3
-    - typeOfDamage: 268435458
-      damageMultiplier: 1
-    resistances:
-    - typeOfDamage: 268435460
-      damageAntiMultiplier: 5
+  vulnerabilities:
+  - typeOfDamage: 268435464
+    damageMultiplier: 1
+  resistances:
+  - typeOfDamage: 268435460
+    damageAntiMultiplier: 5
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0

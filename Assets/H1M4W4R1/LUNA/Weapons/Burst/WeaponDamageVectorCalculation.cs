@@ -16,7 +16,7 @@ namespace H1M4W4R1.LUNA.Weapons.Burst
         [BurstCompile]
         [BurstCompatible]
         public static void FindClosestDamageVector(
-            ref WeaponData data,
+            in WeaponData data,
             in float3 position,
             in quaternion rotation,
             in float3 collisionPoint,

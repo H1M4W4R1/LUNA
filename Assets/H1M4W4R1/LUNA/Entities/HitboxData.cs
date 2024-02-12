@@ -18,12 +18,18 @@ namespace H1M4W4R1.LUNA.Entities
         public UnsafeList<DamageResistance> resistances;
 
         [NotBurstCompatible]
-        public void RegisterVulnerabilities(List<DamageVulnerability> data) =>
+        public void RegisterVulnerabilities(List<DamageVulnerability> data)
+        {
             vulnerabilities = new UnsafeList<DamageVulnerability>(data.Count, Allocator.Domain);
-        
+            foreach (var obj in data) vulnerabilities.Add(obj);
+        }
+
         [NotBurstCompatible]
-        public void RegisterResistances(List<DamageResistance> data) =>
+        public void RegisterResistances(List<DamageResistance> data)
+        {
             resistances = new UnsafeList<DamageResistance>(data.Count, Allocator.Domain);
+            foreach (var obj in data) resistances.Add(obj);
+        }
 
         public void Dispose()
         {
