@@ -10,7 +10,7 @@ namespace H1M4W4R1.LUNA.Weapons
     public class StaticWeapon : WeaponBase
     {
         [BurstCompile]
-        public override float3 GetRecentSpeed() => new float3(1, 1, 1);
+        public override float3 GetRecentSpeed() => _weaponData.currentSpeed;
 
         [BurstCompile]
         public override float GetSpeedDamageMultiplier() => _damageScaleMethod.CalculateScaleFrom(1f);

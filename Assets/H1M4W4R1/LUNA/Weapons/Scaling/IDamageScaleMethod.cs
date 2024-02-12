@@ -1,4 +1,6 @@
-﻿namespace H1M4W4R1.LUNA.Weapons.Scaling
+﻿using Unity.Burst;
+
+namespace H1M4W4R1.LUNA.Weapons.Scaling
 {
     /// <summary>
     /// Represents damage scaling method for weapons.
@@ -8,7 +10,10 @@
     /// </summary>
     public interface IDamageScaleMethod
     {
+        [BurstCompile]
         public float CalculateScaleFrom(in float speedMultiplier);
+        
+        [BurstCompile]
         float GetBaseDamage();
     }
 }

@@ -1,4 +1,7 @@
-﻿using Unity.Burst;
+﻿using H1M4W4R1.LUNA.Weapons.Burst;
+using H1M4W4R1.LUNA.Weapons.Data;
+using Unity.Burst;
+using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -8,20 +11,16 @@ namespace H1M4W4R1.LUNA.Weapons
     /// Represents dynamic in-world weapon eg. sword or axe.
     /// Beware that for multi-part weapons like nun-cha-ku all parts should have DynamicWeapon assigned.
     /// </summary>
-    [BurstCompile]
     public class DynamicWeapon : WeaponBase
     {
         private float3 _previousPosition; // Cache of last weapon position in 3D WORLD space
-        private float3 _averagedSpeed; // Average speed of weapon in las expectedAttackTime [s]
         
         [Tooltip("How long it should take wielder to swing this thing to deal base damage")]
         public float expectedAttackTime = 5.0f;
         
-        [BurstCompile]
-        public override float3 GetRecentSpeed() => _averagedSpeed;
+        public override float3 GetRecentSpeed() => _weaponData.currentSpeed;
 
-        [BurstCompile]
-        public override float GetSpeedDamageMultiplier() => _damageScaleMethod.CalculateScaleFrom(math.length(_averagedSpeed));
+        public override float GetSpeedDamageMultiplier() => _damageScaleMethod.CalculateScaleFrom(math.length(_weaponData.currentSpeed));
 
         protected new void Awake()
         {
@@ -30,35 +29,33 @@ namespace H1M4W4R1.LUNA.Weapons
             
             // Initialize parameters
             _previousPosition = transform.position;
-            _averagedSpeed = float3.zero;
+            _weaponData.currentSpeed = float3.zero;
         }
 
-        protected void Update()
+        protected new void Update()
         {
+            base.Update();
+            
+            var pos = (float3) transform.position;
             var dt = Time.deltaTime;
-            CalculateSpeedFactor(dt);
+            
+            // TODO: JOB!
+            CalculateSpeedFactor(pos, dt, out _previousPosition);
         }
 
-        [BurstCompile]
-        private void CalculateSpeedFactor(in float deltaTime)
+        [BurstCompile] [BurstCompatible]
+        private unsafe void CalculateSpeedFactor(in float3 currentPosition, in float deltaTime, out float3 previousPosition)
         {
             // Compute position and speed
-            var currentPosition = (float3) transform.position;
             var currentSpeed = (currentPosition - _previousPosition) / deltaTime;
 
             // Update averaged speed
-            _averagedSpeed = CalculateMovingAverage(currentSpeed, deltaTime);
+            WeaponCalculation.UpdateWeaponSpeed(&_weaponData, currentSpeed, deltaTime);
 
             // Update previous position and time for the next frame
-            _previousPosition = currentPosition;
+            previousPosition = currentPosition;
         }
         
-        [BurstCompile]
-        private float3 CalculateMovingAverage(in float3 currentSpeed, in float deltaTime)
-        {
-            // Moving average formula using LERP 
-            var weight = math.clamp(deltaTime / expectedAttackTime, 0f, 1f);
-            return math.lerp(_averagedSpeed, currentSpeed, weight);
-        }
+        
     }
 }

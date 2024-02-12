@@ -22,8 +22,9 @@ namespace H1M4W4R1.LUNA.Weapons.Components
             var cPoint = other.GetContact(0);
 
             // Deal damage
-            Process(hitbox.data, cPoint.point, cPoint.normal, out var dmgInfo);
-            hitbox.DealDamage(ref dmgInfo);
+            // TODO: Job
+            //Process(hitbox.data, cPoint.point, cPoint.normal, out var dmgInfo);
+            //hitbox.DealDamage(ref dmgInfo);
         }
     }
 }

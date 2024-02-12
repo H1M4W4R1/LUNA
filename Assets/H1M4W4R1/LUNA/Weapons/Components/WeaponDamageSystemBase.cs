@@ -1,5 +1,7 @@
 ﻿using H1M4W4R1.LUNA.Entities;
+using H1M4W4R1.LUNA.Weapons.Burst;
 using H1M4W4R1.LUNA.Weapons.Damage;
+using H1M4W4R1.LUNA.Weapons.Data;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Mathematics;
@@ -29,14 +31,24 @@ namespace H1M4W4R1.LUNA.Weapons.Components
         /// </summary>
         [BurstCompile]
         [NotBurstCompatible]
-        public void Process(in HitboxData hitbox, in float3 position, in float3 normalVector, out DamageInfo dmgInfo)
+        public unsafe void Process(
+            in WeaponData weaponData, 
+            in HitboxData hitbox, 
+            in float3 objectPosition,
+            in quaternion objectRotation,
+            in float3 eventPosition, 
+            in float3 normalVector, 
+            out DamageInfo dmgInfo)
         {
-            // Get collision information and damage type
-            var dVector = _weapon.FindClosestDamageVector(position, normalVector);
-            var damageType = dVector.damageType | _weapon.damageType;
+            // Get vector information
+            WeaponDamageVectorCalculation.FindClosestDamageVector(&weaponData, objectPosition, objectRotation,
+                eventPosition, normalVector, out var dVector);
+            
+            // Evaluate damage type via combination
+            var damageType = dVector.damageType | weaponData.damageType;
             
             // Compute damage for this weapon
-            var damage = _weapon.GetSpeedDamageMultiplier(); // Speed multiplier and IDamageScaleMethod
+            var damage = weaponData.GetSpeedDamageMultiplier(); // Speed multiplier and IDamageScaleMethod
             var damageMultVulnerability = 0f;
             var damageMultResistance = 0f;
             
@@ -48,7 +60,7 @@ namespace H1M4W4R1.LUNA.Weapons.Components
                 if (!vulnerability.IsVulnerableTo(damageType)) continue;
 
                 // Compute scaling
-                switch (_weapon.vulnerabilityScaling)
+                switch (weaponData.vulnerabilityScaling)
                 {
                     case VulnerabilityScaling.None:
                         if (vulnerability.damageMultiplier > damageMultVulnerability)
@@ -77,7 +89,7 @@ namespace H1M4W4R1.LUNA.Weapons.Components
                 if (!resistance.IsResistantTo(damageType)) continue;
 
                 // Compute scaling
-                switch (_weapon.vulnerabilityScaling)
+                switch (weaponData.vulnerabilityScaling)
                 {
                     case VulnerabilityScaling.None:
                         if (resistance.damageAntiMultiplier > damageMultResistance)

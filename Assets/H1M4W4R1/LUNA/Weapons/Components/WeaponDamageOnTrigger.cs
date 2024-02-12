@@ -25,8 +25,9 @@ namespace H1M4W4R1.LUNA.Weapons.Components
             var direction = math.normalize(hitboxPosition - _transform.position);
             
             // Deal damage
-            Process(hitbox.data, hitboxPosition, direction, out var dmgInfo);
-            hitbox.DealDamage(ref dmgInfo);
+            // TODO: Job
+            //Process(hitbox.data, hitboxPosition, direction, out var dmgInfo);
+            //hitbox.DealDamage(ref dmgInfo);
         }
     }
 }
