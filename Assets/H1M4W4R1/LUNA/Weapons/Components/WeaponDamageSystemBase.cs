@@ -1,6 +1,14 @@
-﻿using H1M4W4R1.LUNA.Entities;
+﻿using System;
+using System.Collections.Generic;
+using H1M4W4R1.LUNA.Entities;
+using H1M4W4R1.LUNA.Weapons.Burst;
 using H1M4W4R1.LUNA.Weapons.Damage;
+using H1M4W4R1.LUNA.Weapons.Data;
+using H1M4W4R1.LUNA.Weapons.Jobs;
+using H1M4W4R1.LUNA.Weapons.Jobs.Data;
 using Unity.Burst;
+using Unity.Collections;
+using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -10,109 +18,68 @@ namespace H1M4W4R1.LUNA.Weapons.Components
     /// Represents basic weapon subsystem that is responsible for detecting damage occurence.
     /// It can be for example: when weapon collides with enemy or when enemy enters trigger.
     /// </summary>
+    [BurstCompile]
     public abstract class WeaponDamageSystemBase : MonoBehaviour
     {
         private WeaponBase _weapon;
         protected Transform _transform;
-        
+        private List<LinkedJob<Hitbox>> _jobs = new List<LinkedJob<Hitbox>>();
+
         protected void Awake()
         {
             _weapon = GetComponent<WeaponBase>();
             _transform = transform;
         }
 
-        /// <summary>
-        /// Process this damage system
-        /// </summary>
-        [BurstCompile]
-        public void Process(in HitboxData hitbox, in float3 position, in float3 normalVector, out DamageInfo dmgInfo)
+        protected void Process(Hitbox hitbox, float3 pos, quaternion rot, float3 hitPos, float3 hitNormal)
         {
-            // Get collision information and damage type
-            var dVector = _weapon.FindClosestDamageVector(position, normalVector);
-            var damageType = dVector.damageType | _weapon.damageType;
-            
-            // Compute damage for this weapon
-            var damage = _weapon.GetSpeedDamageMultiplier(); // Speed multiplier and IDamageScaleMethod
-            var damageMultVulnerability = 0f;
-            var damageMultResistance = 0f;
-            
-            // INFO: This seems to be compiled with burst, but List<> should not be compatible with it,
-            // maybe Burst does it differently?
-            
-            // Check for vulnerabilities
-            foreach (var vulnerability in hitbox.vulnerabilities)
-            {
-                if (!vulnerability.IsVulnerableTo(damageType)) continue;
-
-                // Compute scaling
-                switch (_weapon.vulnerabilityScaling)
+            ProcessWeaponHitJob.Prepare(new WeaponHitData()
                 {
-                    case VulnerabilityScaling.None:
-                        if (vulnerability.damageMultiplier > damageMultVulnerability)
-                            damageMultVulnerability = vulnerability.damageMultiplier;
-                        break;
-                    case VulnerabilityScaling.Additive:
-                        damageMultVulnerability += vulnerability.damageMultiplier;
-                        break;
-                    case VulnerabilityScaling.Multiplicative:
-                        damageMultVulnerability = damageMultVulnerability == 0f
-                            ? vulnerability.damageMultiplier
-                            : damageMultVulnerability * vulnerability.damageMultiplier;
-                        // damage *= vulnerability.damageMultiplier;
-                        break;
-                    case VulnerabilityScaling.Exponential:
-                        damageMultVulnerability = damageMultVulnerability == 0f ? 
-                            vulnerability.damageMultiplier : math.pow(damageMultVulnerability, vulnerability.damageMultiplier);
-                        // damage = math.pow(damage, vulnerability.damageMultiplier);
-                        break;
-                }
-            }
-            
-            // Check for resistances
-            foreach (var resistance in hitbox.resistances)
+                    weaponData = _weapon.GetData(),
+                    hitboxData = hitbox.data,
+                    hitNormal = hitNormal,
+                    hitPos = hitPos,
+                    weaponPos = pos,
+                    weaponRotation = rot
+                }, out var job);
+
+            // Register job
+            _jobs.Add(new LinkedJob<Hitbox>(job, job.Schedule(), hitbox));
+        }
+
+        private void OnDestroy()
+        {
+            // Dispose all running jobs
+            foreach (var jobReference in _jobs)
             {
-                if (!resistance.IsResistantTo(damageType)) continue;
-
-                // Compute scaling
-                switch (_weapon.vulnerabilityScaling)
-                {
-                    case VulnerabilityScaling.None:
-                        if (resistance.damageAntiMultiplier > damageMultResistance)
-                            damageMultResistance = resistance.damageAntiMultiplier;
-                        break;
-                    case VulnerabilityScaling.Additive:
-                        damageMultResistance += resistance.damageAntiMultiplier;
-                        break;
-                    case VulnerabilityScaling.Multiplicative:
-                        damageMultResistance = damageMultResistance == 0f
-                            ? resistance.damageAntiMultiplier
-                            : damageMultResistance * resistance.damageAntiMultiplier;
-                        // damage /= resistance.damageAntiMultiplier;
-                        break;
-                    case VulnerabilityScaling.Exponential:
-                        damageMultResistance = damageMultResistance == 0f ? 
-                            resistance.damageAntiMultiplier : math.pow(damageMultResistance, resistance.damageAntiMultiplier);
-                        // damage = math.pow(damage, 1f / resistance.damageAntiMultiplier);
-                        break;
-                }
+                jobReference.handle.Complete();
+                if (jobReference.job is INativeDisposable disposable)
+                    disposable.Dispose();
             }
+        }
 
-            // Mult damage by vulnerability
-            if (damageMultVulnerability > 0f)
-                damage *= damageMultVulnerability;
-            if (damageMultResistance > 0f)
-                damage /= damageMultResistance;
-
-            // And all other multipliers
-            damage *= hitbox.baseDamageMultiplier;
-
-            // Deal damage
-            dmgInfo = new DamageInfo()
+        protected void Update()
+        {
+            // Check for completed jobs
+            // NOTE: this is bad, may cause invocation delays in case of multiple attacks same time, but IDC
+            for (var index = 0; index < _jobs.Count; index++)
             {
-                damageAmount = damage,
-                damageType = damageType,
-                weapon = _weapon
-            };
+                var jobReference = _jobs[index];
+                if (!jobReference.handle.IsCompleted) continue;
+                
+                // Stop compiler from bitching
+                jobReference.handle.Complete();
+
+                // Get job and damage information, then get rid of obsolete data to prevent issues
+                var job = (ProcessWeaponHitJob) jobReference.job;
+                var dmgInfo = job.GetDamageInfo();
+
+                // Deal damage
+                jobReference.refValue.DealDamage(ref dmgInfo);
+                job.Dispose();
+
+                _jobs.Remove(jobReference);
+            }
         }
     }
 }

@@ -5,7 +5,7 @@ namespace H1M4W4R1.LUNA.Entities
 {
     public struct DamageInfo
     {
-        public WeaponBase weapon;
+        // public WeaponBase weapon; // TODO: WeaponPTR
         public float damageAmount;
         public DamageType damageType;
     }

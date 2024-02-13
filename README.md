@@ -10,6 +10,7 @@ It also has a advantage of being able to differentiate attack types within a sin
 * Unity.Mathematics
 * Unity.Burst
 * Unity.Collections
+* Unity.Jobs
 
 # Weapons
 ## Static wapon (Component)

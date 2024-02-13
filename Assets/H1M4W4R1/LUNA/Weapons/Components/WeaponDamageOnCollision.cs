@@ -21,9 +21,10 @@ namespace H1M4W4R1.LUNA.Weapons.Components
             // Only first contact matters
             var cPoint = other.GetContact(0);
 
+            var cTransform = transform;
+            
             // Deal damage
-            Process(hitbox.data, cPoint.point, cPoint.normal, out var dmgInfo);
-            hitbox.DealDamage(ref dmgInfo);
+            Process(hitbox, cTransform.position, cTransform.rotation, cPoint.point, cPoint.normal);
         }
     }
 }

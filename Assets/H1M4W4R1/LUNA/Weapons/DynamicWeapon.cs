@@ -1,4 +1,10 @@
-﻿using Unity.Burst;
+﻿using H1M4W4R1.LUNA.Weapons.Burst;
+using H1M4W4R1.LUNA.Weapons.Data;
+using H1M4W4R1.LUNA.Weapons.Jobs;
+using H1M4W4R1.LUNA.Weapons.Jobs.Data;
+using Unity.Burst;
+using Unity.Collections;
+using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -8,20 +14,20 @@ namespace H1M4W4R1.LUNA.Weapons
     /// Represents dynamic in-world weapon eg. sword or axe.
     /// Beware that for multi-part weapons like nun-cha-ku all parts should have DynamicWeapon assigned.
     /// </summary>
-    [BurstCompile]
     public class DynamicWeapon : WeaponBase
     {
+        private JobHandle _updateSpeedJobHandle;
+        private UpdateWeaponSpeedDataJob _updateSpeedJob;
+        private bool _hadJob = false;
+        
         private float3 _previousPosition; // Cache of last weapon position in 3D WORLD space
-        private float3 _averagedSpeed; // Average speed of weapon in las expectedAttackTime [s]
         
         [Tooltip("How long it should take wielder to swing this thing to deal base damage")]
         public float expectedAttackTime = 5.0f;
         
-        [BurstCompile]
-        public override float3 GetRecentSpeed() => _averagedSpeed;
+        public override float3 GetRecentSpeed() => weaponData.currentSpeed;
 
-        [BurstCompile]
-        public override float GetSpeedDamageMultiplier() => _damageScaleMethod.CalculateScaleFrom(math.length(_averagedSpeed));
+        public override float GetSpeedDamageMultiplier() => _damageScaleMethod.CalculateScaleFrom(math.length(weaponData.currentSpeed));
 
         protected new void Awake()
         {
@@ -30,35 +36,55 @@ namespace H1M4W4R1.LUNA.Weapons
             
             // Initialize parameters
             _previousPosition = transform.position;
-            _averagedSpeed = float3.zero;
+            weaponData.currentSpeed = float3.zero;
         }
 
-        protected void Update()
+        protected void OnDestroy()
         {
-            var dt = Time.deltaTime;
-            CalculateSpeedFactor(dt);
-        }
-
-        [BurstCompile]
-        private void CalculateSpeedFactor(in float deltaTime)
-        {
-            // Compute position and speed
-            var currentPosition = (float3) transform.position;
-            var currentSpeed = (currentPosition - _previousPosition) / deltaTime;
-
-            // Update averaged speed
-            _averagedSpeed = CalculateMovingAverage(currentSpeed, deltaTime);
-
-            // Update previous position and time for the next frame
-            _previousPosition = currentPosition;
+            // Clean-up memory
+            if (_hadJob)
+            {
+                _updateSpeedJobHandle.Complete();
+                _updateSpeedJob.Dispose();
+            }
         }
         
-        [BurstCompile]
-        private float3 CalculateMovingAverage(in float3 currentSpeed, in float deltaTime)
+        protected new void Update()
         {
-            // Moving average formula using LERP 
-            var weight = math.clamp(deltaTime / expectedAttackTime, 0f, 1f);
-            return math.lerp(_averagedSpeed, currentSpeed, weight);
+            base.Update();
+            
+            var pos = (float3) transform.position;
+            var dt = Time.deltaTime;
+            
+            // Run job section
+            if (_updateSpeedJobHandle.IsCompleted || !_hadJob)
+            {
+                // Copy data
+                if (_hadJob)
+                {
+                    // Make sure job is completed
+                    _updateSpeedJobHandle.Complete();
+                    
+                    weaponData.currentSpeed = _updateSpeedJob.GetCurrentSpeed();
+                    _previousPosition = _updateSpeedJob.GetPreviousPosition();
+                    
+                    // Delete old job after data gathering
+                    _updateSpeedJob.Dispose();
+                }
+                
+                // Create new job
+                UpdateWeaponSpeedDataJob.Prepare(
+                    new WeaponMovementData()
+                    {
+                        weaponData = weaponData,
+                        deltaTime = dt,
+                        position = pos,
+                        previousPosition = _previousPosition
+                    }, out _updateSpeedJob);
+                
+                _updateSpeedJobHandle = _updateSpeedJob.Schedule(_updateSpeedJobHandle);
+                _hadJob = true;
+            }
         }
     }
 }
