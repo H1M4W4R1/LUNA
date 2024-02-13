@@ -16,6 +16,10 @@ namespace H1M4W4R1.LUNA.Weapons
     /// </summary>
     public class DynamicWeapon : WeaponBase
     {
+        private JobHandle _updateSpeedJobHandle;
+        private UpdateWeaponSpeedDataJob _updateSpeedJob;
+        private bool _hadJob = false;
+        
         private float3 _previousPosition; // Cache of last weapon position in 3D WORLD space
         
         [Tooltip("How long it should take wielder to swing this thing to deal base damage")]
@@ -35,33 +39,52 @@ namespace H1M4W4R1.LUNA.Weapons
             weaponData.currentSpeed = float3.zero;
         }
 
+        protected void OnDestroy()
+        {
+            // Clean-up memory
+            if (_hadJob)
+            {
+                _updateSpeedJobHandle.Complete();
+                _updateSpeedJob.Dispose();
+            }
+        }
+        
         protected new void Update()
         {
             base.Update();
             
             var pos = (float3) transform.position;
             var dt = Time.deltaTime;
-
-            // Run the job and update data
-            UpdateWeaponSpeedDataJob.Prepare(
-                new WeaponMovementData()
+            
+            // Run job section
+            if (_updateSpeedJobHandle.IsCompleted || !_hadJob)
+            {
+                // Copy data
+                if (_hadJob)
                 {
-                    weaponData = weaponData,
-                    deltaTime = dt,
-                    position = pos,
-                    previousPosition = _previousPosition
-                }, out var job);
-            
-            // Run job and wait for completion
-            job.Schedule().Complete();
-            weaponData.currentSpeed = job.GetCurrentSpeed();
-            _previousPosition = job.GetPreviousPosition();
-            
-            job.Dispose();
+                    // Make sure job is completed
+                    _updateSpeedJobHandle.Complete();
+                    
+                    weaponData.currentSpeed = _updateSpeedJob.GetCurrentSpeed();
+                    _previousPosition = _updateSpeedJob.GetPreviousPosition();
+                    
+                    // Delete old job after data gathering
+                    _updateSpeedJob.Dispose();
+                }
+                
+                // Create new job
+                UpdateWeaponSpeedDataJob.Prepare(
+                    new WeaponMovementData()
+                    {
+                        weaponData = weaponData,
+                        deltaTime = dt,
+                        position = pos,
+                        previousPosition = _previousPosition
+                    }, out _updateSpeedJob);
+                
+                _updateSpeedJobHandle = _updateSpeedJob.Schedule(_updateSpeedJobHandle);
+                _hadJob = true;
+            }
         }
-
-    
-        
-        
     }
 }

@@ -27,8 +27,7 @@ namespace H1M4W4R1.LUNA.Weapons.Components
             var cTransform = transform;
             
             // Deal damage
-            var dmgInfo = Process(hitbox.data, cTransform.position, cTransform.rotation, hitboxPosition, direction);
-            hitbox.DealDamage(ref dmgInfo);
+            Process(hitbox, cTransform.position, cTransform.rotation, hitboxPosition, direction);
         }
     }
 }
