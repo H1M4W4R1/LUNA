@@ -29,6 +29,7 @@ namespace H1M4W4R1.LUNA.Weapons.Jobs
             };
         }
         
+        [BurstCompile]
         public void Execute()
         {
             // Update weapon data
@@ -37,11 +38,13 @@ namespace H1M4W4R1.LUNA.Weapons.Jobs
             _movementData.Value = value;
         }
 
+        [BurstCompile]
         public void Dispose()
         {
             _movementData.Dispose();
         }
 
+        [BurstCompile]
         public JobHandle Dispose(JobHandle inputDeps)
         {
             _movementData.Dispose();

@@ -145,6 +145,7 @@ namespace H1M4W4R1.LUNA.Weapons.Jobs
             };
         }
 
+        [BurstCompile]
         public void Dispose()
         {
             _hitData.Dispose();
@@ -152,6 +153,7 @@ namespace H1M4W4R1.LUNA.Weapons.Jobs
   
         }
 
+        [BurstCompile]
         public JobHandle Dispose(JobHandle inputDeps)
         {
             _hitData.Dispose();
