@@ -54,8 +54,9 @@ namespace H1M4W4R1.LUNA.Weapons.Jobs
         [BurstCompile] [BurstCompatible]
         private void CalculateSpeedFactor(ref WeaponMovementData movementData)
         {
+            // Return if deltaTime is 0 to avoid division by zero in the speed calculation
             if (movementData.deltaTime == 0) return;
-            
+
             // Compute position and speed
             var currentSpeed = (movementData.position - movementData.previousPosition) / movementData.deltaTime;
 

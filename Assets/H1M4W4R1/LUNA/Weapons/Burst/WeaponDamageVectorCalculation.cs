@@ -31,7 +31,7 @@ namespace H1M4W4R1.LUNA.Weapons.Burst
             out WeaponDamageVector closestStruct)
         {
             if(data.damageVectors.Length < 1)
-                throw new ArgumentException("[LUNA] Weapon must have at least one damage vector. Otherwise it's useless!");
+                throw new ArgumentException("[LUNA] Weapon must have at least one damage vector for calculation.");
 
             closestStruct = default;
             var invertedCollisionNormal = -collisionNormal;
