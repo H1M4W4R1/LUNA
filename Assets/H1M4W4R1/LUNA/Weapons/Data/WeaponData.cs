@@ -54,13 +54,13 @@ namespace H1M4W4R1.LUNA.Weapons.Data
         [NotBurstCompatible]
         public void RegisterVectors(List<WeaponDamageVector> vectors)
         {
+            if (vectors == null) throw new ArgumentException($"List {nameof(vectors)} cannot be null");
             damageVectors = new UnsafeList<WeaponDamageVector>(vectors.Count, Allocator.Domain);
-            foreach (var vector in vectors)
-                damageVectors.Add(vector);
+            foreach (var vector in vectors) damageVectors.Add(vector);
         }
 
         [BurstCompile]
-        public float GetSpeedDamageMultiplier() => speedDamageMultiplier;
+        public readonly float GetSpeedDamageMultiplier() => speedDamageMultiplier;
         
         [BurstCompile]
         public void Dispose() => damageVectors.Dispose();

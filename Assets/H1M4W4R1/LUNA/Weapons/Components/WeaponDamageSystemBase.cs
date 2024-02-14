@@ -31,7 +31,7 @@ namespace H1M4W4R1.LUNA.Weapons.Components
             _transform = transform;
         }
 
-        protected void Process(Hitbox hitbox, float3 pos, quaternion rot, float3 hitPos, float3 hitNormal)
+        protected void ProcessDamageEvent(Hitbox hitbox, float3 pos, quaternion rot, float3 hitPos, float3 hitNormal)
         {
             ProcessWeaponHitJob.Prepare(new WeaponHitData()
                 {
@@ -60,14 +60,14 @@ namespace H1M4W4R1.LUNA.Weapons.Components
 
         protected void Update()
         {
-            // Check for completed jobs
-            // NOTE: this is bad, may cause invocation delays in case of multiple attacks same time, but IDC
-            for (var index = 0; index < _jobs.Count; index++)
+            // Create a temporary list to store jobs to be removed
+            var jobsToRemove = new List<LinkedJob<Hitbox>>();
+
+            foreach (var jobReference in _jobs)
             {
-                var jobReference = _jobs[index];
                 if (!jobReference.handle.IsCompleted) continue;
-                
-                // Stop compiler from bitching
+
+                // Stop compiler from complaining
                 jobReference.handle.Complete();
 
                 // Get job and damage information, then get rid of obsolete data to prevent issues
@@ -78,8 +78,14 @@ namespace H1M4W4R1.LUNA.Weapons.Components
                 jobReference.refValue.DealDamage(ref dmgInfo);
                 job.Dispose();
 
-                _jobs.Remove(jobReference);
+                // Add job to the removal list instead of removing it directly
+                jobsToRemove.Add(jobReference);
             }
+
+            // Remove all completed jobs from the original list
+            foreach (var job in jobsToRemove)
+                _jobs.Remove(job);
+
         }
     }
 }

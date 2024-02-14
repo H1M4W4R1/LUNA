@@ -17,14 +17,14 @@ namespace H1M4W4R1.LUNA.Weapons.Components
         {
             // Get HitBox component
             var hitbox = other.gameObject.GetComponent<Hitbox>();
+            if (!hitbox) return;
 
             // Only first contact matters
             var cPoint = other.GetContact(0);
-
-            var cTransform = transform;
             
             // Deal damage
-            Process(hitbox, cTransform.position, cTransform.rotation, cPoint.point, cPoint.normal);
+            ProcessDamageEvent(hitbox, _transform.position, _transform.rotation, 
+                cPoint.point, cPoint.normal);
         }
     }
 }

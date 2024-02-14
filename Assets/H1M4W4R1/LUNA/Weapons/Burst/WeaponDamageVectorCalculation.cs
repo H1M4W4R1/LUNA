@@ -1,9 +1,9 @@
-﻿using H1M4W4R1.LUNA.Weapons.Computation;
+﻿using System;
+using H1M4W4R1.LUNA.Weapons.Computation;
 using H1M4W4R1.LUNA.Weapons.Data;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Mathematics;
-using UnityEngine;
 
 namespace H1M4W4R1.LUNA.Weapons.Burst
 {
@@ -11,8 +11,15 @@ namespace H1M4W4R1.LUNA.Weapons.Burst
     public static class WeaponDamageVectorCalculation
     {
         /// <summary>
-        /// Find closest damage vector based on attack point and normalized direction
+        /// Finds the closest damage vector for a given weapon.
         /// </summary>
+        /// <param name="data">The weapon data.</param>
+        /// <param name="position">The position of the weapon.</param>
+        /// <param name="rotation">The rotation of the weapon.</param>
+        /// <param name="collisionPoint">The point of collision.</param>
+        /// <param name="collisionNormal">The normal of the collision surface.</param>
+        /// <param name="closestStruct">The closest damage vector to the collision point.</param>
+        /// <exception cref="ArgumentException">Thrown when the weapon does not have any damage vectors.</exception>
         [BurstCompile]
         [BurstCompatible]
         public static void FindClosestDamageVector(
@@ -23,38 +30,23 @@ namespace H1M4W4R1.LUNA.Weapons.Burst
             in float3 collisionNormal,
             out WeaponDamageVector closestStruct)
         {
-            closestStruct = default(WeaponDamageVector);
-
             if(data.damageVectors.Length < 1)
-                Debug.LogError("[LUNA] Weapon must have at least one damage vector. Otherwise it's useless!");
+                throw new ArgumentException("[LUNA] Weapon must have at least one damage vector. Otherwise it's useless!");
 
-            // Invert collision normal for calculation (use anti-normal)
-            var cAntiNormal = -collisionNormal;
+            closestStruct = default;
+            var invertedCollisionNormal = -collisionNormal;
             var minScore = float.MaxValue;
 
-            // INFO: damageVectors must be NativeList (not Collections.Generic.List)
             foreach (var currentStruct in data.damageVectors)
             {
-                // Calculate angle difference (cosine similarity between **normalized** vectors)
-                var angleDifference = 
-                    math.dot(currentStruct.GetVectorForRotation(rotation), cAntiNormal);
-
-                // Ignore direction if does not matter
-                if (!data.directionMatters)
-                    angleDifference = math.abs(angleDifference);
-
-                // Calculate distance (startPoint is in local space, collision is in world space)
+                var angleDifference = math.dot(currentStruct.GetVectorForRotation(rotation), invertedCollisionNormal);
+                angleDifference = data.directionMatters ? angleDifference : math.abs(angleDifference);
                 var distance = math.distance(currentStruct.startPoint + position, collisionPoint);
-
-                // Combine angle and distance using specified weights
                 var score = data.angleWeight * (1 - angleDifference) + data.distanceWeight * distance;
 
-                // Update closest struct if the current score is smaller
-                if (score < minScore)
-                {
-                    minScore = score;
-                    closestStruct = currentStruct;
-                }
+                if (score > minScore) continue;
+                minScore = score;
+                closestStruct = currentStruct;
             }
         }
     }

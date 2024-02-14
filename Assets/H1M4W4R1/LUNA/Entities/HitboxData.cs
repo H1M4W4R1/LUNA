@@ -22,19 +22,36 @@ namespace H1M4W4R1.LUNA.Entities
         [RuntimeGenerated]
         public UnsafeList<DamageResistance> resistances;
 
-        [NotBurstCompatible]
-        public void RegisterVulnerabilities(List<DamageVulnerability> data)
+        /// <summary>
+        /// Registers a list of data to the target list.
+        /// </summary>
+        /// <typeparam name="T">The type of the data. Must be unmanaged.</typeparam>
+        /// <param name="data">The list of data to register.</param>
+        /// <param name="targetList">The target list where the data will be registered.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the data list is null.</exception>
+        public void RegisterData<T>(List<T> data, out UnsafeList<T> targetList) where T : unmanaged
         {
-            vulnerabilities = new UnsafeList<DamageVulnerability>(data.Count, Allocator.Domain);
-            foreach (var obj in data) vulnerabilities.Add(obj);
+            if (data == null) throw new ArgumentNullException(nameof(data));
+            targetList = new UnsafeList<T>(data.Count, Allocator.Domain);
+            foreach (var obj in data) targetList.Add(obj);
         }
 
+        /// <summary>
+        /// Registers a list of vulnerabilities to the hitbox.
+        /// </summary>
+        /// <param name="data">The list of vulnerabilities to register.</param>
         [NotBurstCompatible]
-        public void RegisterResistances(List<DamageResistance> data)
-        {
-            resistances = new UnsafeList<DamageResistance>(data.Count, Allocator.Domain);
-            foreach (var obj in data) resistances.Add(obj);
-        }
+        public void RegisterVulnerabilities(List<DamageVulnerability> data) =>
+            RegisterData(data, out vulnerabilities);
+
+        /// <summary>
+        /// Registers a list of resistances to the hitbox.
+        /// </summary>
+        /// <param name="data">The list of resistances to register.</param>
+        [NotBurstCompatible]
+        public void RegisterResistances(List<DamageResistance> data) =>
+            RegisterData(data, out resistances);
+        
 
         [BurstCompile]
         public void Dispose()

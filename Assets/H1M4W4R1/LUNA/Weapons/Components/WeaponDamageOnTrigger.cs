@@ -18,16 +18,17 @@ namespace H1M4W4R1.LUNA.Weapons.Components
         {
             // Get components
             var hitbox = other.gameObject.GetComponent<Hitbox>();
+            if (!hitbox) return;
+            
             var hTransform = hitbox.transform;
             var hitboxPosition = hTransform.position;
 
             // Compute direction (somewhat okay-ish)
             var direction = math.normalize(hitboxPosition - _transform.position);
             
-            var cTransform = transform;
-            
             // Deal damage
-            Process(hitbox, cTransform.position, cTransform.rotation, hitboxPosition, direction);
+            ProcessDamageEvent(hitbox, hitboxPosition, _transform.rotation, 
+                hitboxPosition, direction);
         }
     }
 }

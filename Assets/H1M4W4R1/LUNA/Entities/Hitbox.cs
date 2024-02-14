@@ -32,9 +32,11 @@ namespace H1M4W4R1.LUNA.Entities
         /// </summary>
         public virtual void DealDamage(ref DamageInfo info)
         {
-            onHit.Invoke(info);
-           
-            Debug.Log("RECEIVED: " + info.damageType + " with amount of " + info.damageAmount);
+            onHit?.Invoke(info);
+
+#if UNITY_EDITOR
+            Debug.Log($"RECEIVED: {info.damageType} with amount of {info.damageAmount}");
+#endif
         }
     }
 }

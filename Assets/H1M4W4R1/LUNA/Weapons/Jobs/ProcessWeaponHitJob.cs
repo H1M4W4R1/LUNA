@@ -66,8 +66,6 @@ namespace H1M4W4R1.LUNA.Weapons.Jobs
             var damageMultVulnerability = 0f;
             var damageMultResistance = 0f;
 
-            // INFO: NVM forgot that Burst does not compile from managed objects.
-
             // Check for vulnerabilities
             foreach (var vulnerability in hitbox.vulnerabilities)
             {
