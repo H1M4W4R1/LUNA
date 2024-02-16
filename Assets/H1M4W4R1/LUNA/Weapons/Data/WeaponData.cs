@@ -9,7 +9,6 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
-using Unity.Mathematics;
 using UnityEngine;
 
 namespace H1M4W4R1.LUNA.Weapons.Data
@@ -45,12 +44,6 @@ namespace H1M4W4R1.LUNA.Weapons.Data
         [RuntimeGenerated]
         public UnsafeList<WeaponDamageVector> damageVectors;
 
-        [RuntimeGenerated]
-        public float3 currentSpeed;
-        
-        [RuntimeGenerated]
-        public float speedDamageMultiplier;
-
         [NotBurstCompatible]
         public void RegisterVectors(List<WeaponDamageVector> vectors)
         {
@@ -59,9 +52,6 @@ namespace H1M4W4R1.LUNA.Weapons.Data
             foreach (var vector in vectors) damageVectors.Add(vector);
         }
 
-        [BurstCompile]
-        public readonly float GetSpeedDamageMultiplier() => speedDamageMultiplier;
-        
         [BurstCompile]
         public void Dispose() => damageVectors.Dispose();
         

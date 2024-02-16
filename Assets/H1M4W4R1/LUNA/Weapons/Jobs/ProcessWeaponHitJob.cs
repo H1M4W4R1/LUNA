@@ -7,7 +7,6 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
-using UnityEngine;
 
 namespace H1M4W4R1.LUNA.Weapons.Jobs
 {
@@ -62,7 +61,7 @@ namespace H1M4W4R1.LUNA.Weapons.Jobs
             var damageType = dVector.damageType | weaponData.damageType;
 
             // Compute damage for this weapon
-            var damage = weaponData.GetSpeedDamageMultiplier(); // Speed multiplier and IDamageScaleMethod
+            var damage = dVector.currentBaseDamage; // Speed multiplier and IDamageScaleMethod
             var damageMultVulnerability = 0f;
             var damageMultResistance = 0f;
 

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using H1M4W4R1.LUNA.Entities;
-using H1M4W4R1.LUNA.Weapons.Burst;
-using H1M4W4R1.LUNA.Weapons.Damage;
-using H1M4W4R1.LUNA.Weapons.Data;
 using H1M4W4R1.LUNA.Weapons.Jobs;
 using H1M4W4R1.LUNA.Weapons.Jobs.Data;
 using Unity.Burst;

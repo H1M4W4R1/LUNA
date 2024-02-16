@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Runtime.InteropServices;
+using H1M4W4R1.LUNA.Attributes;
 using H1M4W4R1.LUNA.Weapons.Damage;
 using Unity.Burst;
 using Unity.Mathematics;
@@ -36,5 +36,18 @@ namespace H1M4W4R1.LUNA.Weapons.Computation
         /// Vector damage type
         /// </summary>
         public DamageType damageType;
+        
+#region RUNTIME_VARIABLES
+        [RuntimeGenerated]
+        public float3 currentSpeed;
+        
+        [RuntimeGenerated]
+        public float currentVelocity;
+
+        [RuntimeGenerated]
+        public float currentBaseDamage;
+
+        #endregion
+
     }
 }

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using H1M4W4R1.LUNA.Weapons.Damage;
-using Unity.Burst;
 using UnityEngine;
 using UnityEngine.Events;
 

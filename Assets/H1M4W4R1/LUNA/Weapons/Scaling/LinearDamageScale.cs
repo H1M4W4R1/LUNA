@@ -7,13 +7,10 @@ namespace H1M4W4R1.LUNA.Weapons.Scaling
     /// DMG = base_dmg * speedFactor
     /// </summary>
     [BurstCompile]
-    public struct LinearDamageScale : IDamageScaleMethod
+    public static class LinearDamageScale
     {
-        public float baseDamage;
-
         [BurstCompile]
-        public float CalculateScaleFrom(in float speedMultiplier) => baseDamage * speedMultiplier;
-        
-        public float GetBaseDamage() => baseDamage;
+        public static float Calculate(in float baseDamage, in float speedMultiplier) => 
+            baseDamage * speedMultiplier;
     }
 }

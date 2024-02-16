@@ -1,9 +1,5 @@
-﻿using H1M4W4R1.LUNA.Weapons.Burst;
-using H1M4W4R1.LUNA.Weapons.Data;
-using H1M4W4R1.LUNA.Weapons.Jobs;
+﻿using H1M4W4R1.LUNA.Weapons.Jobs;
 using H1M4W4R1.LUNA.Weapons.Jobs.Data;
-using Unity.Burst;
-using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
@@ -24,10 +20,6 @@ namespace H1M4W4R1.LUNA.Weapons
         
         [Tooltip("How long it should take wielder to swing this thing to deal base damage")]
         public float expectedAttackTime = 5.0f;
-        
-        public override float3 GetRecentSpeed() => weaponData.currentSpeed;
-
-        public override float GetSpeedDamageMultiplier() => _damageScaleMethod.CalculateScaleFrom(math.length(weaponData.currentSpeed));
 
         protected new void Awake()
         {
@@ -36,7 +28,6 @@ namespace H1M4W4R1.LUNA.Weapons
             
             // Initialize parameters
             _previousPosition = transform.position;
-            weaponData.currentSpeed = float3.zero;
         }
 
         protected void OnDestroy()
@@ -49,10 +40,8 @@ namespace H1M4W4R1.LUNA.Weapons
             }
         }
         
-        protected new void Update()
+        protected void Update()
         {
-            base.Update();
-            
             var pos = (float3) transform.position;
             var dt = Time.deltaTime;
             
@@ -65,7 +54,6 @@ namespace H1M4W4R1.LUNA.Weapons
                     // Make sure job is completed
                     _updateSpeedJobHandle.Complete();
                     
-                    weaponData.currentSpeed = _updateSpeedJob.GetCurrentSpeed();
                     _previousPosition = _updateSpeedJob.GetPreviousPosition();
                     
                     // Delete old job after data gathering

@@ -1,5 +1,4 @@
 ﻿using Unity.Burst;
-using Unity.Mathematics;
 
 namespace H1M4W4R1.LUNA.Weapons
 {
@@ -9,11 +8,5 @@ namespace H1M4W4R1.LUNA.Weapons
     [BurstCompile]
     public class StaticWeapon : WeaponBase
     {
-        [BurstCompile]
-        public override float3 GetRecentSpeed() => weaponData.currentSpeed;
-
-        [BurstCompile]
-        public override float GetSpeedDamageMultiplier() => _damageScaleMethod.CalculateScaleFrom(1f);
-
     }
 }

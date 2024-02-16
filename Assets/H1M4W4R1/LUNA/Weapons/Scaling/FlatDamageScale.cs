@@ -7,16 +7,9 @@ namespace H1M4W4R1.LUNA.Weapons.Scaling
     /// DMG = base_dmg
     /// </summary>
     [BurstCompile]
-    public struct FlatDamageScale : IDamageScaleMethod
+    public static class FlatDamageScale
     {
-        public float baseDamage;
-        
         [BurstCompile]
-        public float CalculateScaleFrom(in float speedMultiplier)
-        {
-            return baseDamage;
-        }
-        
-        public float GetBaseDamage() => baseDamage;
+        public static float Calculate(in float baseDamage, in float speedMultiplier) => baseDamage;
     }
 }
