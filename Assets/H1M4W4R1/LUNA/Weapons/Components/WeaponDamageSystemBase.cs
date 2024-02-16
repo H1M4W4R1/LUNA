@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using H1M4W4R1.LUNA.Entities;
+using H1M4W4R1.LUNA.Utilities.Jobs;
 using H1M4W4R1.LUNA.Weapons.Jobs;
 using H1M4W4R1.LUNA.Weapons.Jobs.Data;
 using Unity.Burst;
@@ -19,7 +20,6 @@ namespace H1M4W4R1.LUNA.Weapons.Components
     {
         private WeaponBase _weapon;
         protected Transform _transform;
-        private List<LinkedJob<Hitbox>> _jobs = new List<LinkedJob<Hitbox>>();
 
         protected void Awake()
         {
@@ -39,49 +39,22 @@ namespace H1M4W4R1.LUNA.Weapons.Components
                     weaponRotation = rot
                 }, out var job);
 
-            // Register job
-            _jobs.Add(new LinkedJob<Hitbox>(job, job.Schedule(), hitbox));
+            // Run the job
+            JobManager.ScheduleJob<Hitbox, ProcessWeaponHitJob, ManagedJob<Hitbox>>(job, 
+                hitbox, DamageHitbox);
         }
 
-        private void OnDestroy()
+        private void DamageHitbox(ManagedJob<Hitbox> job)
         {
-            // Dispose all running jobs
-            foreach (var jobReference in _jobs)
-            {
-                jobReference.handle.Complete();
-                if (jobReference.job is INativeDisposable disposable)
-                    disposable.Dispose();
-            }
+            var jobReference = job.GetJob<ProcessWeaponHitJob>();
+            var dmgInfo = jobReference.GetDamageInfo();
+            
+            // Deal damage to hitbox
+            job.GetReference().DealDamage(ref dmgInfo);
+            
+            // Get rid of trashy job
+            job.Dispose();
         }
 
-        protected void Update()
-        {
-            // Create a temporary list to store jobs to be removed
-            var jobsToRemove = new List<LinkedJob<Hitbox>>();
-
-            foreach (var jobReference in _jobs)
-            {
-                if (!jobReference.handle.IsCompleted) continue;
-
-                // Stop compiler from complaining
-                jobReference.handle.Complete();
-
-                // Get job and damage information, then get rid of obsolete data to prevent issues
-                var job = (ProcessWeaponHitJob) jobReference.job;
-                var dmgInfo = job.GetDamageInfo();
-
-                // Deal damage
-                jobReference.refValue.DealDamage(ref dmgInfo);
-                job.Dispose();
-
-                // Add job to the removal list instead of removing it directly
-                jobsToRemove.Add(jobReference);
-            }
-
-            // Remove all completed jobs from the original list
-            foreach (var job in jobsToRemove)
-                _jobs.Remove(job);
-
-        }
     }
 }

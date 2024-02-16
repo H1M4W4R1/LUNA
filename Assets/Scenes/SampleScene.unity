@@ -268,21 +268,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8552754e0b19405db663fde5c9a8ccf7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  selectedIndex: 0
+  selectedIndex: 1
   weaponData:
     damageScaleMethod: 1
     flatDamage: 10
     vulnerabilityScaling: 2
-    damageType: 536870928
+    damageType: 16
     distanceWeight: 1
     angleWeight: 5
     directionMatters: 1
     expectedAttackTime: 1
-    currentSpeed:
-      x: 0
-      y: 0
-      z: 0
-    speedDamageMultiplier: 0
   damageVectors:
   - startPoint:
       x: 0
@@ -294,7 +289,13 @@ MonoBehaviour:
         y: -0.7051189
         z: 0
         w: 0.7090891
-    damageType: 268435464
+    damageType: 8
+    currentSpeed:
+      x: 0
+      y: 0
+      z: 0
+    currentVelocity: 0
+    currentBaseDamage: 0
   - startPoint:
       x: 0
       y: 0
@@ -305,7 +306,13 @@ MonoBehaviour:
         y: 0.7067684
         z: 0
         w: 0.70744497
-    damageType: 268435460
+    damageType: 4
+    currentSpeed:
+      x: 0
+      y: 0
+      z: 0
+    currentVelocity: 0
+    currentBaseDamage: 0
   expectedAttackTime: 0.1
 --- !u!114 &177662028
 MonoBehaviour:
@@ -358,11 +365,6 @@ MonoBehaviour:
     angleWeight: 5
     directionMatters: 1
     expectedAttackTime: 0
-    currentSpeed:
-      x: 0
-      y: 0
-      z: 0
-    speedDamageMultiplier: 0
   damageVectors:
   - startPoint:
       x: 0
@@ -374,7 +376,13 @@ MonoBehaviour:
         y: 0
         z: 0
         w: 0
-    damageType: 536870928
+    damageType: 16
+    currentSpeed:
+      x: 0
+      y: 0
+      z: 0
+    currentVelocity: 0
+    currentBaseDamage: 0
 --- !u!4 &354196395
 Transform:
   m_ObjectHideFlags: 0
@@ -609,10 +617,10 @@ MonoBehaviour:
   data:
     baseDamageMultiplier: 1
   vulnerabilities:
-  - typeOfDamage: 268435464
+  - typeOfDamage: 8
     damageMultiplier: 1
   resistances:
-  - typeOfDamage: 268435460
+  - typeOfDamage: 4
     damageAntiMultiplier: 5
 --- !u!1 &963194225
 GameObject:
@@ -706,6 +714,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1609850161
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1609850163}
+  - component: {fileID: 1609850162}
+  m_Layer: 0
+  m_Name: JobManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1609850162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1609850161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e00285bd11e6417d864aa813f9616d95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1609850163
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1609850161}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 8.1081085, y: 15.693876, z: -3.7055764}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -715,3 +767,4 @@ SceneRoots:
   - {fileID: 775190706}
   - {fileID: 177662025}
   - {fileID: 354196395}
+  - {fileID: 1609850163}

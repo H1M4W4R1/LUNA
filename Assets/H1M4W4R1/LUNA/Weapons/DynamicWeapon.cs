@@ -1,4 +1,6 @@
-﻿using H1M4W4R1.LUNA.Weapons.Jobs;
+﻿using System;
+using H1M4W4R1.LUNA.Utilities.Jobs;
+using H1M4W4R1.LUNA.Weapons.Jobs;
 using H1M4W4R1.LUNA.Weapons.Jobs.Data;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -12,10 +14,8 @@ namespace H1M4W4R1.LUNA.Weapons
     /// </summary>
     public class DynamicWeapon : WeaponBase
     {
-        private JobHandle _updateSpeedJobHandle;
-        private UpdateWeaponSpeedDataJob _updateSpeedJob;
-        private bool _hadJob = false;
-        
+        private float _lastTimeEvent = 0f;
+        private IManagedJob _currentSpeedJob;
         private float3 _previousPosition; // Cache of last weapon position in 3D WORLD space
         
         [Tooltip("How long it should take wielder to swing this thing to deal base damage")]
@@ -28,51 +28,68 @@ namespace H1M4W4R1.LUNA.Weapons
             
             // Initialize parameters
             _previousPosition = transform.position;
+            _lastTimeEvent = Time.time;
+            
+            // Begin job
+            if (_currentSpeedJob == null)
+                UpdateJobDataEvent(true);
+        }
+
+        public void UpdateJobDataEvent(ManagedJob<object> job) => UpdateJobDataEvent(false);
+        
+        public void UpdateJobDataEvent(bool isFirst)
+        {
+            // Stash data if job has one
+            if (!isFirst)
+            {
+                try
+                {
+                    var lastJob = _currentSpeedJob.GetJob<UpdateWeaponSpeedDataJob>();
+                    _previousPosition = lastJob.GetPreviousPosition();
+
+                    // Dispose trash data
+                    _currentSpeedJob.Dispose();
+                }
+                catch (ObjectDisposedException)
+                {
+                    // Our game already died. We don't care at all.
+                    // Probably manager killed our job due to crash or shutdown.
+                    
+                    // It might be a good idea to force-return to block execution of code below
+                    return;
+                }
+            }
+            
+            // Process time pass
+            var currentTime = Time.time;
+            var dt = currentTime - _lastTimeEvent;
+            _lastTimeEvent = currentTime;
+
+            // Don't return to past
+            if (dt < 0) return;
+            
+            var pos = (float3) transform.position;
+            
+            // Create new job
+            UpdateWeaponSpeedDataJob.Prepare(
+                new WeaponMovementData()
+                {
+                    weaponData = weaponData,
+                    deltaTime = dt,
+                    position = pos,
+                    previousPosition = _previousPosition
+                }, out var job);
+
+            _currentSpeedJob =
+                JobManager.ScheduleJob<object, UpdateWeaponSpeedDataJob, ManagedJob<object>>(job, 
+                onCompleted: UpdateJobDataEvent);
         }
 
         protected void OnDestroy()
         {
-            // Clean-up memory
-            if (_hadJob)
-            {
-                _updateSpeedJobHandle.Complete();
-                _updateSpeedJob.Dispose();
-            }
+            // Clean-up memory (force-finish the job)
+            _currentSpeedJob?.Finish();
         }
-        
-        protected void Update()
-        {
-            var pos = (float3) transform.position;
-            var dt = Time.deltaTime;
-            
-            // Run job section
-            if (_updateSpeedJobHandle.IsCompleted || !_hadJob)
-            {
-                // Copy data
-                if (_hadJob)
-                {
-                    // Make sure job is completed
-                    _updateSpeedJobHandle.Complete();
-                    
-                    _previousPosition = _updateSpeedJob.GetPreviousPosition();
-                    
-                    // Delete old job after data gathering
-                    _updateSpeedJob.Dispose();
-                }
-                
-                // Create new job
-                UpdateWeaponSpeedDataJob.Prepare(
-                    new WeaponMovementData()
-                    {
-                        weaponData = weaponData,
-                        deltaTime = dt,
-                        position = pos,
-                        previousPosition = _previousPosition
-                    }, out _updateSpeedJob);
-                
-                _updateSpeedJobHandle = _updateSpeedJob.Schedule(_updateSpeedJobHandle);
-                _hadJob = true;
-            }
-        }
+       
     }
 }

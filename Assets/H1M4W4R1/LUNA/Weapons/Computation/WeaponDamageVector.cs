@@ -37,7 +37,8 @@ namespace H1M4W4R1.LUNA.Weapons.Computation
         /// </summary>
         public DamageType damageType;
         
-#region RUNTIME_VARIABLES
+        #region RUNTIME_VARIABLES
+        
         [RuntimeGenerated]
         public float3 currentSpeed;
         
@@ -46,7 +47,7 @@ namespace H1M4W4R1.LUNA.Weapons.Computation
 
         [RuntimeGenerated]
         public float currentBaseDamage;
-
+        
         #endregion
 
     }

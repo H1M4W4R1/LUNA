@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using H1M4W4R1.LUNA.Attributes;
+using H1M4W4R1.LUNA.Utilities;
 using H1M4W4R1.LUNA.Weapons.Computation;
 using H1M4W4R1.LUNA.Weapons.Damage;
 using H1M4W4R1.LUNA.Weapons.Scaling;
@@ -45,12 +46,8 @@ namespace H1M4W4R1.LUNA.Weapons.Data
         public UnsafeList<WeaponDamageVector> damageVectors;
 
         [NotBurstCompatible]
-        public void RegisterVectors(List<WeaponDamageVector> vectors)
-        {
-            if (vectors == null) throw new ArgumentException($"List {nameof(vectors)} cannot be null");
-            damageVectors = new UnsafeList<WeaponDamageVector>(vectors.Count, Allocator.Domain);
-            foreach (var vector in vectors) damageVectors.Add(vector);
-        }
+        public void RegisterVectors(List<WeaponDamageVector> vectors) =>
+            Toolkit.RegisterData(vectors, out damageVectors);
 
         [BurstCompile]
         public void Dispose() => damageVectors.Dispose();

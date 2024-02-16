@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using H1M4W4R1.LUNA.Attributes;
 using H1M4W4R1.LUNA.Weapons.Damage;
 using UnityEngine;
 using UnityEngine.Events;
@@ -13,8 +14,8 @@ namespace H1M4W4R1.LUNA.Entities
         public UnityEvent<DamageInfo> onHit;
 
         public HitboxData data = new HitboxData();
-
-        // Editor-only variables
+        
+        // Serializable variables (managed)
         public List<DamageVulnerability> vulnerabilities = new List<DamageVulnerability>();
         public List<DamageResistance> resistances = new List<DamageResistance>();
 
