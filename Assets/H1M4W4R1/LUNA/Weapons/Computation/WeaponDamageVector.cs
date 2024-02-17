@@ -37,6 +37,7 @@ namespace H1M4W4R1.LUNA.Weapons.Computation
         [BurstCompile]
         public float3 GetStartPoint(quaternion objectRotation, float3 weaponScale) => math.rotate(objectRotation, startPoint) * weaponScale;
 
+        [BurstCompile]
         public void SetStartPoint(quaternion objectRotation, float3 weaponScale, float3 point)
             => startPoint = math.rotate(math.inverse(objectRotation), point) / weaponScale;  
         
