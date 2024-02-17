@@ -50,6 +50,7 @@ namespace H1M4W4R1.LUNA.Weapons
         {
             // Prepare weapon vectors
             weaponData.RegisterVectors(damageVectors);
+            weaponData.weaponScale = transform.lossyScale;
         }
 
         private void OnDestroy()

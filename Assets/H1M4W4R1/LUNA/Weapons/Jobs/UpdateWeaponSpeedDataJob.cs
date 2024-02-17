@@ -64,7 +64,8 @@ namespace H1M4W4R1.LUNA.Weapons.Jobs
             if (movementData.deltaTime == 0) return;
 
             // Rotate vector point with weapon, then use it to calc current position
-            vector.currentPosition = movementData.weaponPosition + math.rotate(movementData.weaponQuaternion, vector.startPoint);
+            vector.currentPosition = 
+                movementData.weaponPosition + vector.GetStartPoint(movementData.weaponQuaternion, movementData.weaponData.weaponScale);
 
             // Previous position was not found
             if (!vector.posIsNotNull)

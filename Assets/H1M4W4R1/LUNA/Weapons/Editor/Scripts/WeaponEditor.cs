@@ -15,6 +15,7 @@ namespace H1M4W4R1.LUNA.Weapons.Editor.Scripts
             var wTransform = weapon.transform;
             var wPosition = (float3) wTransform.position;
             var wRotation = (quaternion) wTransform.rotation;
+            var wScale = (float3) wTransform.lossyScale;
             
             // Draw vector gizmos
             var vIndex = 0;
@@ -24,7 +25,7 @@ namespace H1M4W4R1.LUNA.Weapons.Editor.Scripts
                 var vector = vectors[index];
                 
                 // Prepare dynamic variables
-                var cPoint = wPosition + vector.startPoint;
+                var cPoint = wPosition + vector.GetStartPoint(wRotation, wScale);
                 var cQuat = vector.vectorRotation;
                 if(cQuat.value is {x:0, y:0, z:0, w:0})
                     cQuat = quaternion.identity;
@@ -45,8 +46,7 @@ namespace H1M4W4R1.LUNA.Weapons.Editor.Scripts
                         
                         // Update vector data
                         var vClone = vectors[vIndex];
-                        vClone.startPoint = cPoint - wPosition;
-
+                        vClone.SetStartPoint(wRotation, wScale, cPoint - wPosition);
                         vClone.vectorRotation = cQuat;
 
                         // Update vectors information

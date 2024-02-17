@@ -41,7 +41,7 @@ namespace H1M4W4R1.LUNA.Weapons.Burst
             {
                 var angleDifference = math.dot(currentStruct.GetVectorForRotation(rotation), invertedCollisionNormal);
                 angleDifference = data.directionMatters ? angleDifference : math.abs(angleDifference);
-                var distance = math.distance(currentStruct.startPoint + position, collisionPoint);
+                var distance = math.distance(currentStruct.GetStartPoint(rotation, data.weaponScale) + position, collisionPoint);
                 var score = data.angleWeight * (1 - angleDifference) + data.distanceWeight * distance;
 
                 if (score > minScore) continue;

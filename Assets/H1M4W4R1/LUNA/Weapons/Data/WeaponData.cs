@@ -10,6 +10,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace H1M4W4R1.LUNA.Weapons.Data
@@ -42,6 +43,8 @@ namespace H1M4W4R1.LUNA.Weapons.Data
         [Tooltip("How long should it take to swing this weapon")]
         public float expectedAttackTime;
 
+        [RuntimeGenerated] public float3 weaponScale;
+        
         [RuntimeGenerated]
         public UnsafeList<WeaponDamageVector> damageVectors;
 
