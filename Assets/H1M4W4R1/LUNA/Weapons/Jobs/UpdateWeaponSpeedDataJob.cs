@@ -17,7 +17,7 @@ namespace H1M4W4R1.LUNA.Weapons.Jobs
     [BurstCompatible] [BurstCompile] 
     public struct UpdateWeaponSpeedDataJob : IJob, INativeDisposable
     {
-        private NativeReference<WeaponMovementData> _movementData;
+        private WeaponMovementData _movementData;
 
         [BurstCompatible]
         public static void Prepare(
@@ -26,60 +26,58 @@ namespace H1M4W4R1.LUNA.Weapons.Jobs
         {
             job = new UpdateWeaponSpeedDataJob()
             {
-                _movementData = new NativeReference<WeaponMovementData>(movementData, Allocator.TempJob)
+                _movementData = movementData
             };
         }
         
         [BurstCompile]
         public void Execute()
         {
-            var vectorList = _movementData.Value.weaponData.damageVectors;
-            var mData = _movementData.Value;
+            var vectorList = _movementData.weaponData.damageVectors;
+
             for (var index = 0; index < vectorList.Length; index++)
             {
                 // Get vector and update data, then put updated data onto list
                 var vector = vectorList[index]; // .get .cpy
-                CalculateSpeedFactor(ref mData, ref vector);
+                CalculateSpeedFactor(_movementData, ref vector);
                 vectorList[index] = vector; // .ins
             }
-
-            _movementData.Value = mData; // Update movement data
         }
 
         [BurstCompile]
         public void Dispose()
         {
-            _movementData.Dispose();
         }
 
         [BurstCompile]
         public JobHandle Dispose(JobHandle inputDeps)
         {
-            _movementData.Dispose();
             return inputDeps;
         }
         
         [BurstCompile] [BurstCompatible]
         private void CalculateSpeedFactor(
-            ref WeaponMovementData movementData, 
+            in WeaponMovementData movementData, 
             ref WeaponDamageVector vector)
         {
             // Return if deltaTime is 0 to avoid division by zero in the speed calculation
             if (movementData.deltaTime == 0) return;
 
-            // Compute position and speed
-            var currentSpeed = (movementData.position - movementData.previousPosition) / movementData.deltaTime;
+            // Rotate vector point with weapon, then use it to calc current position
+            vector.currentPosition = movementData.weaponPosition + math.rotate(movementData.weaponQuaternion, vector.startPoint);
+            
+            // Compute position delta and speed
+            var currentSpeed = (vector.currentPosition - vector.previousPosition) / movementData.deltaTime;
 
             var wData = movementData.weaponData;
             
             // Moving average formula using LERP
             var weight = wData.expectedAttackTime > 0 ? math.clamp(movementData.deltaTime / wData.expectedAttackTime, 0f, 1f) : 1f;
-            vector.currentSpeed = math.lerp(vector.currentSpeed, currentSpeed, weight);
-            vector.currentVelocity = math.length(vector.currentSpeed);
+            vector.currentVelocity = math.lerp(vector.currentVelocity, currentSpeed, weight);
+            vector.currentSpeed = math.length(vector.currentVelocity);
             vector.currentBaseDamage = CalculateBaseDamageForVector(movementData.weaponData, vector);
-  
-            // Update previous position and time for the next frame
-            movementData.previousPosition = movementData.position;
+
+            vector.previousPosition = vector.currentPosition;
         }
 
         /// <summary>
@@ -102,20 +100,17 @@ namespace H1M4W4R1.LUNA.Weapons.Jobs
             switch (data.damageScaleMethod)
             {
                 case DamageScaleMethod.Linear:
-                    return LinearDamageScale.Calculate(data.flatDamage, vector.currentVelocity);
+                    return LinearDamageScale.Calculate(data.flatDamage, vector.currentSpeed);
                 case DamageScaleMethod.Flat:
-                    return FlatDamageScale.Calculate(data.flatDamage, vector.currentVelocity);
+                    return FlatDamageScale.Calculate(data.flatDamage, vector.currentSpeed);
                 case DamageScaleMethod.Quadratic:
-                    return QuadraticDamageScale.Calculate(data.flatDamage, vector.currentVelocity);
+                    return QuadraticDamageScale.Calculate(data.flatDamage, vector.currentSpeed);
                 case DamageScaleMethod.Exponential:
-                    return ExponentialDamageScale.Calculate(data.flatDamage, vector.currentVelocity);
+                    return ExponentialDamageScale.Calculate(data.flatDamage, vector.currentSpeed);
             }
 
             Debug.LogError("[LUNA] Unknown damage type.");
             return 1f;
         }
-
-
-        public float3 GetPreviousPosition() => _movementData.Value.previousPosition;
     }
 }

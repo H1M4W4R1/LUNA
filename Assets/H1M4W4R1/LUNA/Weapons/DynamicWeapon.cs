@@ -16,7 +16,6 @@ namespace H1M4W4R1.LUNA.Weapons
     {
         private float _lastTimeEvent = 0f;
         private IManagedJob _currentSpeedJob;
-        private float3 _previousPosition; // Cache of last weapon position in 3D WORLD space
         
         [Tooltip("How long it should take wielder to swing this thing to deal base damage")]
         public float expectedAttackTime = 5.0f;
@@ -27,7 +26,6 @@ namespace H1M4W4R1.LUNA.Weapons
             base.Awake();
             
             // Initialize parameters
-            _previousPosition = transform.position;
             _lastTimeEvent = Time.time;
             
             // Begin job
@@ -44,10 +42,6 @@ namespace H1M4W4R1.LUNA.Weapons
             {
                 try
                 {
-                    var lastJob = _currentSpeedJob.GetJob<UpdateWeaponSpeedDataJob>();
-                    _previousPosition = lastJob.GetPreviousPosition();
-
-                    // Dispose trash data
                     _currentSpeedJob.Dispose();
                 }
                 catch (ObjectDisposedException)
@@ -67,8 +61,10 @@ namespace H1M4W4R1.LUNA.Weapons
 
             // Don't return to past
             if (dt < 0) return;
-            
-            var pos = (float3) transform.position;
+
+            var tt = transform;
+            var weaponPosition = (float3) tt.position;
+            var weaponRotation = (quaternion) tt.rotation;
             
             // Create new job
             UpdateWeaponSpeedDataJob.Prepare(
@@ -76,8 +72,8 @@ namespace H1M4W4R1.LUNA.Weapons
                 {
                     weaponData = weaponData,
                     deltaTime = dt,
-                    position = pos,
-                    previousPosition = _previousPosition
+                    weaponPosition = weaponPosition,
+                    weaponQuaternion = weaponRotation
                 }, out var job);
 
             _currentSpeedJob =

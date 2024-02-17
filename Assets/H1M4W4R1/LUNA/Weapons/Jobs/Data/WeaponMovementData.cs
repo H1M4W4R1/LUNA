@@ -9,8 +9,8 @@ namespace H1M4W4R1.LUNA.Weapons.Jobs.Data
     public struct WeaponMovementData
     {
         public WeaponData weaponData;
-        public float3 position;
-        public float3 previousPosition;
+        public float3 weaponPosition;
+        public quaternion weaponQuaternion;
         public float deltaTime;
     }
 }

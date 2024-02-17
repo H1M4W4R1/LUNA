@@ -290,6 +290,14 @@ MonoBehaviour:
         z: 0
         w: 0.7090891
     damageType: 8
+    previousPosition:
+      x: 0
+      y: 0
+      z: 0
+    currentPosition:
+      x: 0
+      y: 0
+      z: 0
     currentSpeed:
       x: 0
       y: 0
@@ -307,6 +315,14 @@ MonoBehaviour:
         z: 0
         w: 0.70744497
     damageType: 4
+    previousPosition:
+      x: 0
+      y: 0
+      z: 0
+    currentPosition:
+      x: 0
+      y: 0
+      z: 0
     currentSpeed:
       x: 0
       y: 0
@@ -377,6 +393,14 @@ MonoBehaviour:
         z: 0
         w: 0
     damageType: 16
+    previousPosition:
+      x: 0
+      y: 0
+      z: 0
+    currentPosition:
+      x: 0
+      y: 0
+      z: 0
     currentSpeed:
       x: 0
       y: 0

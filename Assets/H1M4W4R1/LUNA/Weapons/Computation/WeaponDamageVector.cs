@@ -3,6 +3,7 @@ using H1M4W4R1.LUNA.Attributes;
 using H1M4W4R1.LUNA.Weapons.Damage;
 using Unity.Burst;
 using Unity.Mathematics;
+using UnityEngine.Serialization;
 
 namespace H1M4W4R1.LUNA.Weapons.Computation
 {
@@ -38,12 +39,18 @@ namespace H1M4W4R1.LUNA.Weapons.Computation
         public DamageType damageType;
         
         #region RUNTIME_VARIABLES
+
+        [RuntimeGenerated]
+        public float3 previousPosition;
+
+        [RuntimeGenerated]
+        public float3 currentPosition;
         
         [RuntimeGenerated]
-        public float3 currentSpeed;
+        public float3 currentVelocity;
         
         [RuntimeGenerated]
-        public float currentVelocity;
+        public float currentSpeed;
 
         [RuntimeGenerated]
         public float currentBaseDamage;
