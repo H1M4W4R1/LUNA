@@ -65,7 +65,15 @@ namespace H1M4W4R1.LUNA.Weapons.Jobs
 
             // Rotate vector point with weapon, then use it to calc current position
             vector.currentPosition = movementData.weaponPosition + math.rotate(movementData.weaponQuaternion, vector.startPoint);
-            
+
+            // Previous position was not found
+            if (!vector.posIsNotNull)
+            {
+                vector.previousPosition = vector.currentPosition;
+                vector.posIsNotNull = true;
+                return;
+            }
+
             // Compute position delta and speed
             var currentSpeed = (vector.currentPosition - vector.previousPosition) / movementData.deltaTime;
 

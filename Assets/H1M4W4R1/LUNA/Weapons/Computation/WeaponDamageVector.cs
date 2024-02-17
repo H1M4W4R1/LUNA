@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using H1M4W4R1.LUNA.Attributes;
 using H1M4W4R1.LUNA.Weapons.Damage;
 using Unity.Burst;
@@ -40,6 +41,9 @@ namespace H1M4W4R1.LUNA.Weapons.Computation
         
         #region RUNTIME_VARIABLES
 
+        [RuntimeGenerated] [MarshalAs(UnmanagedType.U1)]
+        public bool posIsNotNull;
+        
         [RuntimeGenerated]
         public float3 previousPosition;
 
